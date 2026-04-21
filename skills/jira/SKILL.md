@@ -55,7 +55,12 @@ Feature / Initiative
 
 6. **Bugs follow their own workflow** (New, Refinement, Planning, Backlog, In Progress, Review, Verified, Closed) but are at the same level as Stories for hierarchy purposes.
 
-7. **Bug evaluation — check sibling Stories.** When a Bug has a parent Epic, check the Epic's other children (sibling Stories). Determine if any existing Stories already cover the work needed to fix the bug. If yes, link the Bug to those Stories and note the relationship. If no existing Story covers the fix, suggest creating new Stories under the same Epic for the required work.
+7. **Bug-to-Story workflow.** When a Bug has a parent Epic:
+   - Check the Epic's children for existing Stories that already cover the fix.
+   - If no existing Story covers the fix, suggest creating a Story under the same Epic to track the implementation work. Bugs are typically not added to sprints — Stories are. The Story tracks the engineering work, the Bug tracks the defect.
+   - Always ask the user before creating the Story. Present the suggested fields and let them confirm.
+   - Once the Story is created and the user confirms, suggest transitioning both the Bug and the new Story to "In Progress" (but only after user approval — never transition tickets without asking).
+   - If the Bug has no parent Epic, note this and ask the user whether one should be created or whether to proceed without the Epic hierarchy.
 
 8. **Plan breakdown items become separate Stories under the Epic**, not sub-tasks.
 
@@ -96,6 +101,34 @@ Hierarchy check for OSPRH-2345:
   Type: Story
   Parent Epic: OSPRH-1000
   Status: OK — proceed with planning/implementation
+```
+
+**Bug with parent Epic — suggest Story creation:**
+
+```
+Hierarchy check for OSPRH-3456:
+  Type: Bug
+  Parent Epic: OSPRH-1000 (Glance operator enhancements)
+  Sibling Stories: none that cover this fix
+
+  This Bug has a parent Epic but no Story to track the fix.
+  Bugs are typically not added to sprints — a Story is needed
+  to track the implementation work.
+
+  Suggested Story:
+    Project: OSPRH
+    Type: Story
+    Summary: Fix <bug summary>
+    Epic Link: OSPRH-1000
+    fixVersion: <from Bug>
+    Description: Implementation work for OSPRH-3456
+
+  Create this Story? (y/n)
+
+  After creation, transition both tickets?
+    OSPRH-3456 (Bug): Backlog -> In Progress
+    OSPRH-XXXX (Story): Backlog -> In Progress
+  Confirm? (y/n)
 ```
 
 **Epic — has a Spike but no Story:**
