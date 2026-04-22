@@ -509,9 +509,20 @@ When the last task in a functional group is completed:
 
 1. **Summarize the group**: list completed tasks, files created/modified
 2. **Run verification**: `make fmt && make vet` at minimum
-3. **Present to user**: "Group N (<name>) is complete. Changes: <summary>. Review before I proceed to Group N+1?"
-4. **Wait for approval**: do NOT start the next group until the user approves
-5. **If user requests changes**: apply them, re-verify, re-present
+3. **Dispatch code-review agent** on the group's changes:
+
+   ```
+   Agent(
+     subagent_type="openstack-k8s-agent-tools:code-review:code-review",
+     description="Review Group N changes",
+     prompt="Review the changes from this task group: <files changed in this group>"
+   )
+   ```
+
+   The code-review agent has code-style preloaded, so it checks both conventions and review criteria.
+4. **Present to user**: group summary + code-review findings. "Group N (<name>) is complete. Review: <verdict>. Proceed to Group N+1?"
+5. **Wait for approval**: do NOT start the next group until the user approves
+6. **If code-review or user requests changes**: apply them, re-run verification and review, re-present
 
 ## 8. Post-Implementation: Commit & Completion
 
