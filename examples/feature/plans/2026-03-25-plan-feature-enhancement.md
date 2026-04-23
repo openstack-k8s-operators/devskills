@@ -37,7 +37,7 @@
 
 - [ ] **Step 1: Create the agent directory**
 
-Run: `mkdir -p /home/fmount/projects/openstack-k8s-agent-tools/agents/plan-feature`
+Run: `mkdir -p agents/plan-feature`
 
 - [ ] **Step 2: Write the AGENT.md**
 
@@ -281,7 +281,7 @@ File naming: `$CWD/docs/plans/YYYY-MM-DD-<ticket-or-slug>-plan.md`
 
 - [ ] **Step 3: Verify the file exists and is well-formed**
 
-Run: `wc -l /home/fmount/projects/openstack-k8s-agent-tools/agents/plan-feature/AGENT.md`
+Run: `wc -l agents/plan-feature/AGENT.md`
 Expected: ~200+ lines
 
 - [ ] **Step 4: Commit**
@@ -303,7 +303,7 @@ git commit -m "feat: add plan-feature agent with planning methodology"
 
 - [ ] **Step 1: Create the agent directory**
 
-Run: `mkdir -p /home/fmount/projects/openstack-k8s-agent-tools/agents/task-executor`
+Run: `mkdir -p agents/task-executor`
 
 - [ ] **Step 2: Write the AGENT.md**
 
@@ -595,7 +595,7 @@ When the last task in a functional group is completed:
 
 - [ ] **Step 3: Verify the file exists and is well-formed**
 
-Run: `wc -l /home/fmount/projects/openstack-k8s-agent-tools/agents/task-executor/AGENT.md`
+Run: `wc -l agents/task-executor/AGENT.md`
 Expected: ~200+ lines
 
 - [ ] **Step 4: Commit**
@@ -685,7 +685,7 @@ The agent evaluates these planning principles:
 
 - [ ] **Step 2: Verify the SKILL.md is valid**
 
-Run: `head -5 /home/fmount/projects/openstack-k8s-agent-tools/skills/plan-feature/SKILL.md`
+Run: `head -5 skills/plan-feature/SKILL.md`
 Expected: YAML frontmatter starting with `---`
 
 - [ ] **Step 3: Commit**
@@ -707,7 +707,7 @@ git commit -m "feat: rewrite plan-feature skill with Jira integration and AGENT.
 
 - [ ] **Step 1: Create the skill directory**
 
-Run: `mkdir -p /home/fmount/projects/openstack-k8s-agent-tools/skills/task-executor`
+Run: `mkdir -p skills/task-executor`
 
 - [ ] **Step 2: Write the SKILL.md**
 
@@ -785,11 +785,11 @@ git commit -m "feat: add task-executor skill for plan execution with resume"
 
 - [ ] **Step 1: Copy plan-feature SKILL.md to auto-discovery location**
 
-Run: `cp /home/fmount/projects/openstack-k8s-agent-tools/skills/plan-feature/SKILL.md /home/fmount/projects/openstack-k8s-agent-tools/.claude/skills/plan-feature/SKILL.md`
+Run: `cp skills/plan-feature/SKILL.md .claude/skills/plan-feature/SKILL.md`
 
 - [ ] **Step 2: Create task-executor auto-discovery directory and copy**
 
-Run: `mkdir -p /home/fmount/projects/openstack-k8s-agent-tools/.claude/skills/task-executor && cp /home/fmount/projects/openstack-k8s-agent-tools/skills/task-executor/SKILL.md /home/fmount/projects/openstack-k8s-agent-tools/.claude/skills/task-executor/SKILL.md`
+Run: `mkdir -p .claude/skills/task-executor && cp skills/task-executor/SKILL.md .claude/skills/task-executor/SKILL.md`
 
 - [ ] **Step 3: Commit**
 
@@ -808,7 +808,7 @@ git commit -m "feat: add auto-discovery copies for plan-feature and task-executo
 
 - [ ] **Step 1: Read the current CLAUDE.md**
 
-Run: Read tool on `/home/fmount/projects/openstack-k8s-agent-tools/CLAUDE.md`
+Run: Read tool on `CLAUDE.md`
 
 - [ ] **Step 2: Add task-executor skill documentation**
 
@@ -895,7 +895,7 @@ git commit -m "docs: update CLAUDE.md with task-executor skill and MCP integrati
 
 - [ ] **Step 1: Create the directory and gitkeep**
 
-Run: `mkdir -p /home/fmount/projects/openstack-k8s-agent-tools/docs/plans && touch /home/fmount/projects/openstack-k8s-agent-tools/docs/plans/.gitkeep`
+Run: `mkdir -p docs/plans && touch docs/plans/.gitkeep`
 
 - [ ] **Step 2: Commit**
 
@@ -915,7 +915,7 @@ git commit -m "chore: add docs/plans directory for generated plan files"
 Run:
 
 ```bash
-ls -la /home/fmount/projects/openstack-k8s-agent-tools/agents/plan-feature/AGENT.md /home/fmount/projects/openstack-k8s-agent-tools/agents/task-executor/AGENT.md /home/fmount/projects/openstack-k8s-agent-tools/skills/plan-feature/SKILL.md /home/fmount/projects/openstack-k8s-agent-tools/skills/task-executor/SKILL.md /home/fmount/projects/openstack-k8s-agent-tools/.claude/skills/plan-feature/SKILL.md /home/fmount/projects/openstack-k8s-agent-tools/.claude/skills/task-executor/SKILL.md /home/fmount/projects/openstack-k8s-agent-tools/docs/plans/.gitkeep
+ls -la agents/plan-feature/AGENT.md agents/task-executor/AGENT.md skills/plan-feature/SKILL.md skills/task-executor/SKILL.md .claude/skills/plan-feature/SKILL.md .claude/skills/task-executor/SKILL.md docs/plans/.gitkeep
 ```
 
 Expected: all 7 files exist
@@ -925,7 +925,7 @@ Expected: all 7 files exist
 Run:
 
 ```bash
-head -7 /home/fmount/projects/openstack-k8s-agent-tools/skills/plan-feature/SKILL.md && echo "---" && head -7 /home/fmount/projects/openstack-k8s-agent-tools/skills/task-executor/SKILL.md
+head -7 skills/plan-feature/SKILL.md && echo "---" && head -7 skills/task-executor/SKILL.md
 ```
 
 Expected: both start with `---` and have valid frontmatter
@@ -935,7 +935,7 @@ Expected: both start with `---` and have valid frontmatter
 Run:
 
 ```bash
-diff /home/fmount/projects/openstack-k8s-agent-tools/skills/plan-feature/SKILL.md /home/fmount/projects/openstack-k8s-agent-tools/.claude/skills/plan-feature/SKILL.md && echo "plan-feature: MATCH" && diff /home/fmount/projects/openstack-k8s-agent-tools/skills/task-executor/SKILL.md /home/fmount/projects/openstack-k8s-agent-tools/.claude/skills/task-executor/SKILL.md && echo "task-executor: MATCH"
+diff skills/plan-feature/SKILL.md .claude/skills/plan-feature/SKILL.md && echo "plan-feature: MATCH" && diff skills/task-executor/SKILL.md .claude/skills/task-executor/SKILL.md && echo "task-executor: MATCH"
 ```
 
 Expected: both output "MATCH" (no diff)
@@ -945,14 +945,14 @@ Expected: both output "MATCH" (no diff)
 Run:
 
 ```bash
-grep -c "plan-feature" /home/fmount/projects/openstack-k8s-agent-tools/agents/plan-feature/AGENT.md && grep -c "task-executor" /home/fmount/projects/openstack-k8s-agent-tools/agents/task-executor/AGENT.md
+grep -c "plan-feature" agents/plan-feature/AGENT.md && grep -c "task-executor" agents/task-executor/AGENT.md
 ```
 
 Expected: both return non-zero counts
 
 - [ ] **Step 5: Run the existing skill validation script (regression check)**
 
-Run: `/home/fmount/projects/openstack-k8s-agent-tools/tests/validate-skills.sh 2>&1`
+Run: `tests/validate-skills.sh 2>&1`
 Expected: existing skills still pass (this script does not yet cover plan-feature or task-executor — it is a regression check to ensure nothing is broken)
 
 - [ ] **Step 6: Validate new SKILL.md frontmatter fields**
@@ -960,7 +960,7 @@ Expected: existing skills still pass (this script does not yet cover plan-featur
 Run:
 
 ```bash
-for skill in plan-feature task-executor; do echo "=== $skill ===" && head -8 /home/fmount/projects/openstack-k8s-agent-tools/skills/$skill/SKILL.md | grep -E "^(name|description|user-invocable|allowed-tools|context):" && echo "OK"; done
+for skill in plan-feature task-executor; do echo "=== $skill ===" && head -8 skills/$skill/SKILL.md | grep -E "^(name|description|user-invocable|allowed-tools|context):" && echo "OK"; done
 ```
 
 Expected: both skills show all 5 required frontmatter fields
