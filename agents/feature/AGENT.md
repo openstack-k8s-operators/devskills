@@ -242,10 +242,22 @@ Do NOT proceed to task breakdown until the user explicitly approves a strategy.
 
 ## 5. Task Breakdown Guidelines
 
+### Jira Story Prerequisite
+
+If the input ticket is an Epic and no operator-specific Story exists under it, the **first task** in the breakdown MUST be:
+
+```
+- [ ] **Task 0.1: Create Jira story under <EPIC-ID> for <operator-name>**
+  - **Acceptance:** Story created, linked to Epic, ticket ID recorded in plan header
+```
+
+This task blocks ALL other tasks. The plan status line should read `**Jira Story:** pending` until the story is created. Implementation MUST NOT begin without a trackable Story -- Epics are not sprinted and outcomes cannot be posted to them.
+
 ### Grouping
 
 Group tasks by functional area in this order:
 
+0. **Prerequisites** — Jira story creation (if needed)
 1. **API Changes** — CRD types, markers, generated code
 2. **Webhook Changes** — defaulting, validation
 3. **Controller Logic** — reconciliation, status conditions
@@ -282,6 +294,26 @@ Write the plan document with these sections:
 3. Planning Checklist (table with assessments)
 4. Implementation Strategies (with selected strategy marked)
 5. Task Breakdown (with checkbox status tracking)
+6. Outcome (empty template -- filled in after implementation)
+
+The Outcome section MUST be included as an empty template at the end of every plan:
+
+```markdown
+## Outcome
+
+**Status:** Pending
+**Date:**
+**Commit:**
+**Branch:**
+
+### Summary
+
+### Files Changed
+
+### Notes
+```
+
+This serves as a visible reminder that the plan is not complete until the outcome is recorded, regardless of whether `/task-executor` or manual implementation is used.
 
 Plan files are stored outside the operator repo to avoid polluting it:
 

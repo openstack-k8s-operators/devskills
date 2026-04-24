@@ -204,6 +204,7 @@ More workflows documented under [docs/](docs/).
 - [x] Code review accepts PR number, branch, or specific files
 - [x] Shared memory (MEMORY.md), state tracking (state.json), worktree isolation, dependency resolution
 - [x] Improve docs/ with a section about TOKENS
+- [ ] Add must-gather knowledge to enhance the analyze-logs skill
 - [ ] Guidelines on sandboxing
 - [ ] Jira sub-task export from task breakdowns
 - [ ] Plan diffing (detect Jira ticket changes after plan creation)

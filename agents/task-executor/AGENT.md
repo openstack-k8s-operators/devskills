@@ -526,9 +526,23 @@ When the last task in a functional group is completed:
 
 ## 8. Post-Implementation: Commit & Completion
 
-When all tasks are completed (or a logical set of tasks forms a complete unit of work), follow this protocol.
+When all tasks are completed (or a logical set of tasks forms a complete unit of work), follow this protocol strictly. Steps are numbered and MUST be executed in order -- do not skip any.
 
-### Commit Message
+### Step 1: Final Code Review
+
+Before composing the commit message, dispatch the code-review agent on ALL changes (not just the last group):
+
+```
+Agent(
+  subagent_type="openstack-k8s-agent-tools:code-review:code-review",
+  description="Final review before commit",
+  prompt="Review all changes on the current branch against main: <list all changed files>"
+)
+```
+
+Present the review findings to the user. If the review flags Critical or Major issues, they MUST be resolved before proceeding. Do NOT skip this step even if group boundary reviews already passed -- the final review catches cross-group issues.
+
+### Step 2: Commit Message
 
 Compose the commit message following [git commit guidelines](https://git-scm.com/book/en/v2/Distributed-Git-Contributing-to-a-Project):
 
@@ -567,7 +581,7 @@ git commit -s -S -m "..."
 
 NEVER run `git commit` without both `-s` (Signed-off-by) and `-S` (GPG/SSH signature). If the commit fails due to signing issues, report the error and let the user fix their signing configuration — do NOT retry without the flags.
 
-### Plan Update
+### Step 3: Plan Update (mandatory)
 
 After the commit is approved:
 
@@ -593,20 +607,20 @@ After the commit is approved:
 - <any deviations from the plan, decisions made during implementation>
 ```
 
-### Jira Comment (Optional)
+### Step 4: Jira Outcome Comment (mandatory when Jira-sourced)
 
-If the plan was sourced from a Jira ticket, follow the `/jira` skill hierarchy rules:
+If the plan was sourced from a Jira ticket, this step is NOT optional -- you MUST post an outcome comment. Follow the `/jira` skill hierarchy rules:
 
 1. **Validate the target ticket** — outcome comments go on the **Story/Task/Bug (Level 2)**, never on Epic (Level 3) or Feature (Level 4). If the original ticket was an Epic or Feature, find the relevant Story.
 2. Ask the user: "Want me to post a brief summary of the outcome as a comment on <TICKET-ID>?"
-3. If yes, compose a concise comment. ALL Jira comments MUST start with `[AI-GENERATED]` prefix, followed by: what was done, key files changed, and the commit SHA
+3. If yes, compose a **brief, meaningful** comment (2-3 sentences max). ALL Jira comments MUST start with `[AI-GENERATED]` prefix. Focus on the outcome and status -- NOT a detailed list of files changed. The PR link and diff serve that purpose. Example: `[AI-GENERATED] Implementation in progress. Added X support for Y using Z pattern. PR pending review.`
 4. **Present the comment for human approval** — NEVER post anything to Jira without explicit approval
 5. Post via Atlassian MCP only after the user approves the exact comment text
 6. If MCP is not available, provide the comment text for the user to paste manually
 
 **Do NOT create sub-tasks.** If the user wants plan tasks tracked in Jira, suggest creating separate Stories under the same Epic.
 
-### Memory Update
+### Step 5: Memory Update
 
 After plan completion (commit approved, outcome written), update `~/.openstack-k8s-agents-plans/<operator>/MEMORY.md`:
 

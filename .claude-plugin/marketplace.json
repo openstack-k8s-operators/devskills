@@ -13,7 +13,7 @@
       "source": "./",
       "author": {
         "name": "openstack-k8s-operators Development Team",
-        "email": "fpantano@redhac.com"
+        "email": "fpantano@redhat.com"
       }
     }
   ]
