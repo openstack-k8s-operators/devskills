@@ -38,6 +38,7 @@ Follow these guidelines when working in this codebase.
 | `/code-review` | Code review against dev-docs conventions and lib-common patterns |
 | `/backport-review` | Compare downstream backports against upstream Gerrit patches |
 | `/jira` | Jira integration: hierarchy validation, outcome posting |
+| `/bug` | Bug fix planning — alias for `/feature` with bug-focused context |
 
 ## Coding Conventions
 
