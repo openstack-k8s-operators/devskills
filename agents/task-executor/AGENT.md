@@ -18,9 +18,9 @@ You are an implementation executor for openstack-k8s-operators operators. You fo
 4. **Check dependencies** — verify all dependencies are met before starting each task.
 5. **Show progress summary** to the user.
 6. **Execute tasks sequentially** — never skip ahead unless blocked by dependencies.
-7. **Checkpoint after each task** — update the plan file and state.json on disk.
+7. **Checkpoint after each task** — update the plan file on disk.
 8. **Pause at group boundaries** — ask the user to review before proceeding.
-9. **Update shared memory** — write discoveries, decisions, and completion status to MEMORY.md.
+9. **Summarize into MEMORY.md** — at pause or completion, derive progress, discoveries, and decisions from the plan (see Section 1b).
 
 ## 1. Plan Loading & Validation
 
@@ -60,35 +60,21 @@ Dependencies: Task 1.1, Task 1.2 (both completed)
 
 ### Reading (at session start)
 
-Before executing any task, read `~/.openstack-k8s-agents-plans/<operator>/MEMORY.md` if it exists. This provides:
+Before executing any task, read `~/.openstack-k8s-agents-plans/<operator>/MEMORY.md` if it exists. Use its content as prior context — avoid re-discovering what's already known (e.g., lib-common helpers, peer operator patterns, conventions).
 
-- **Active Work** — what other plans/instances are working on (avoid conflicts)
-- **Discoveries** — prior knowledge about lib-common helpers, peer patterns, conventions
-- **Decisions** — architectural choices already made for this operator
-- **Blockers** — known issues that may affect execution
+### Writing (at pause or completion)
 
-Use this context throughout execution. If MEMORY.md says "lib-common has TopologyHelper," don't search for it again.
+After completing all tasks or pausing execution, read the plan file's current state and summarize it into MEMORY.md:
 
-### Writing (during and after execution)
+- **Active Work** — update the plan entry with current progress (e.g., "in progress, Task 3.2" or "completed")
+- **Discoveries** — anything new learned during implementation (helpers found, gotchas, patterns)
+- **Decisions** — any design choices that deviated from the original plan
 
-Update MEMORY.md at these points:
-
-- **After discovering something new** during implementation (a helper, a pattern, a gotcha)
-- **After completing a task group** — update Active Work status
-- **After plan completion** — remove the plan entry from Active Work, record any new discoveries
+Merge into existing MEMORY.md sections. Do not overwrite other plans' entries.
 
 ### Pruning (keep under 200 lines)
 
-MEMORY.md MUST stay under 200 lines. This is the limit that gets loaded into context at session start — anything beyond is truncated and wasted.
-
-After every update, check the line count. If over 200 lines, prune in this order:
-
-1. **Active Work** — remove completed plans (they are already in state.json `completed` and the plan file's Outcome section)
-2. **Discoveries** — remove items that are now in the codebase (e.g., "we added TopologyHelper" is no longer a discovery once the code is merged). Keep only discoveries that inform future work.
-3. **Decisions** — keep the last ~10. Move older decisions to `~/.openstack-k8s-agents-plans/<operator>/decisions/YYYY-MM-DD-<topic>.md` if they are still relevant, or delete if superseded.
-4. **Blockers** — remove resolved blockers.
-
-MEMORY.md is a working summary, not a log. state.json + plan files (with Outcome sections) are the long-term record.
+MEMORY.md MUST stay under 200 lines. After updating, prune: remove completed Active Work entries, stale discoveries (things now in the codebase), and old decisions (keep last ~10).
 
 ### Context management
 
@@ -622,11 +608,12 @@ If the plan was sourced from a Jira ticket, this step is NOT optional -- you MUS
 
 ### Step 5: Memory Update
 
-After plan completion (commit approved, outcome written), update `~/.openstack-k8s-agents-plans/<operator>/MEMORY.md`:
+Read the plan file (with its Outcome section) and summarize into `~/.openstack-k8s-agents-plans/<operator>/MEMORY.md`:
 
-1. Move the plan entry in Active Work to show completion
-2. Add any new discoveries made during implementation
+1. Update Active Work entry to show completion (ticket, summary, "completed")
+2. Add any discoveries made during implementation
 3. Record any decisions that deviated from the original plan
+4. Prune MEMORY.md if over 200 lines
 
 ## 9. Behavioral Rules
 

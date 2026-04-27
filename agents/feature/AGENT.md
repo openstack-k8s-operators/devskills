@@ -23,6 +23,7 @@ You have deep expertise in controller-runtime, lib-common, Ginkgo/EnvTest testin
 7. **Wait for user approval** of a strategy before creating the task breakdown.
 8. **Produce the task breakdown** grouped by functional area.
 9. **Write the plan file** to `~/.openstack-k8s-agents-plans/<operator-name>/YYYY-MM-DD-<ticket-or-slug>-plan.md`.
+10. **Summarize the plan into MEMORY.md** — derive Active Work, Discoveries, and Decisions from the plan you just wrote (see Section 6b).
 
 When resuming, skip completed steps and pick up from the first missing section.
 
@@ -325,13 +326,17 @@ Where `<operator-name>` is the basename of the current working directory (e.g., 
 
 ## 6b. Shared Project Memory
 
-After writing the plan, update the shared project memory at `~/.openstack-k8s-agents-plans/<operator>/MEMORY.md`. This file persists across sessions and is read by all skills working on this operator.
+After writing the plan, summarize it into `~/.openstack-k8s-agents-plans/<operator>/MEMORY.md`. This file persists across sessions and is read by all skills working on this operator.
 
-### On plan completion, update MEMORY.md with
+### What to write
 
-1. **Active Work** — add an entry for the new plan (ticket, summary, status)
-2. **Discoveries** — anything learned during cross-repo analysis (lib-common helpers found, peer operator patterns, dev-docs conventions)
-3. **Decisions** — the selected strategy and rationale
+Read the plan you just wrote and produce a summary with these sections:
+
+- **Active Work** — one line per plan: ticket, problem summary, status
+- **Discoveries** — anything learned during cross-repo analysis (lib-common helpers, peer operator patterns, conventions)
+- **Decisions** — selected strategy and key design choices
+
+If MEMORY.md already exists, merge your new entries into the existing sections. Do not overwrite other plans' entries.
 
 ### MEMORY.md format
 
@@ -339,20 +344,16 @@ After writing the plan, update the shared project memory at `~/.openstack-k8s-ag
 # <operator-name> Memory
 
 ## Active Work
-- OSPRH-2345: Adding topology support (plan complete, strategy approved)
+- OSPRH-2345: Adding topology support (planned, strategy approved)
 - OSPRH-6789: Fix nil pointer on missing endpoint (in progress, Task 2.1)
 
 ## Discoveries
 - lib-common common/topology has TopologyHelper — use it, don't reimplement
 - nova-operator implemented topology in PR #423 — follow same approach
-- EnvTest suite takes ~45s, kuttl not configured
 
 ## Decisions
 - [2026-04-11] OSPRH-2345: follow nova-operator approach (Strategy A)
 - [2026-04-11] OSPRH-2345: TopologyRef as pointer field with omitempty
-
-## Blockers
-- (none currently)
 ```
 
 ### Reading MEMORY.md
@@ -361,13 +362,10 @@ At the START of every planning session, before any analysis:
 
 1. Read `~/.openstack-k8s-agents-plans/<operator>/MEMORY.md` if it exists
 2. Use its content as prior context — avoid re-discovering what's already known
-3. If a discovery contradicts what's in MEMORY.md, update the file
-
-If MEMORY.md doesn't exist, create it after the first plan is written.
 
 ### Pruning (keep under 200 lines)
 
-MEMORY.md MUST stay under 200 lines. After updating, check the line count and prune if needed: remove completed Active Work entries, stale discoveries (things now in the codebase), and old decisions (keep last ~10). MEMORY.md is a working summary — state.json and plan files are the long-term record.
+MEMORY.md MUST stay under 200 lines. After updating, prune: remove completed Active Work entries, stale discoveries, and old decisions (keep last ~10).
 
 ## 7. Resume Protocol
 
