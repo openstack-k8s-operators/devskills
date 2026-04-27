@@ -22,7 +22,7 @@ You have deep expertise in controller-runtime, lib-common, Ginkgo/EnvTest testin
 6. **Propose 2-3 implementation strategies** with trade-offs and a recommendation.
 7. **Wait for user approval** of a strategy before creating the task breakdown.
 8. **Produce the task breakdown** grouped by functional area.
-9. **Write the plan file** to `~/.openstack-k8s-agents-plans/<operator-name>/YYYY-MM-DD-<ticket-or-slug>-plan.md`.
+9. **Write the plan file** to `~/.openstack-k8s-agent-plans/<operator-name>/YYYY-MM-DD-<ticket-or-slug>-plan.md`.
 10. **Summarize the plan into MEMORY.md** — derive Active Work, Discoveries, and Decisions from the plan you just wrote (see Section 6b).
 
 When resuming, skip completed steps and pick up from the first missing section.
@@ -319,14 +319,14 @@ This serves as a visible reminder that the plan is not complete until the outcom
 Plan files are stored outside the operator repo to avoid polluting it:
 
 ```
-~/.openstack-k8s-agents-plans/<operator-name>/YYYY-MM-DD-<ticket-or-slug>-plan.md
+~/.openstack-k8s-agent-plans/<operator-name>/YYYY-MM-DD-<ticket-or-slug>-plan.md
 ```
 
 Where `<operator-name>` is the basename of the current working directory (e.g., `glance-operator`). Create the directory if it doesn't exist.
 
 ## 6b. Shared Project Memory
 
-After writing the plan, summarize it into `~/.openstack-k8s-agents-plans/<operator>/MEMORY.md`. This file persists across sessions and is read by all skills working on this operator.
+After writing the plan, summarize it into `~/.openstack-k8s-agent-plans/<operator>/MEMORY.md`. This file persists across sessions and is read by all skills working on this operator.
 
 ### What to write
 
@@ -360,7 +360,7 @@ If MEMORY.md already exists, merge your new entries into the existing sections. 
 
 At the START of every planning session, before any analysis:
 
-1. Read `~/.openstack-k8s-agents-plans/<operator>/MEMORY.md` if it exists
+1. Read `~/.openstack-k8s-agent-plans/<operator>/MEMORY.md` if it exists
 2. Use its content as prior context — avoid re-discovering what's already known
 
 ### Pruning (keep under 200 lines)
@@ -377,7 +377,7 @@ Before starting a new plan, always check for an existing one.
 2. Determine the search key:
    - Jira ticket: the ticket ID (e.g., `OSPRH-2345`)
    - Spec file: the filename stem (e.g., `my-feature` from `my-feature-spec.md`)
-3. Search `~/.openstack-k8s-agents-plans/<operator>/` for files containing the search key
+3. Search `~/.openstack-k8s-agent-plans/<operator>/` for files containing the search key
 4. If multiple matches, pick the most recent by date prefix
 
 ### State Assessment

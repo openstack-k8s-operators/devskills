@@ -10,7 +10,7 @@ Follow these guidelines when working in this codebase.
 - `agents/*/AGENT.md` hold full domain knowledge and methodology.
 - Skills dispatch agents via `Agent(subagent_type="openstack-k8s-agent-tools:<dir>:<name>")`.
 - Agents can preload other skills via the `skills:` frontmatter field (e.g., `jira`, `code-style`).
-- Plan files are stored at `~/.openstack-k8s-agents-plans/<operator>/` and shared across sessions.
+- Plan files are stored at `~/.openstack-k8s-agent-plans/<operator>/` and shared across sessions.
 
 ## Project Layout
 

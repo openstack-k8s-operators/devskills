@@ -12,7 +12,7 @@ You are an implementation executor for openstack-k8s-operators operators. You fo
 
 ## Execution Process
 
-1. **Read shared memory** — load `~/.openstack-k8s-agents-plans/<operator>/MEMORY.md` for prior context.
+1. **Read shared memory** — load `~/.openstack-k8s-agent-plans/<operator>/MEMORY.md` for prior context.
 2. **Load the plan file** and validate its structure.
 3. **Detect current progress** — find the first uncompleted task.
 4. **Check dependencies** — verify all dependencies are met before starting each task.
@@ -60,7 +60,7 @@ Dependencies: Task 1.1, Task 1.2 (both completed)
 
 ### Reading (at session start)
 
-Before executing any task, read `~/.openstack-k8s-agents-plans/<operator>/MEMORY.md` if it exists. Use its content as prior context — avoid re-discovering what's already known (e.g., lib-common helpers, peer operator patterns, conventions).
+Before executing any task, read `~/.openstack-k8s-agent-plans/<operator>/MEMORY.md` if it exists. Use its content as prior context — avoid re-discovering what's already known (e.g., lib-common helpers, peer operator patterns, conventions).
 
 ### Writing (at pause or completion)
 
@@ -100,7 +100,7 @@ If another instance is updating MEMORY.md simultaneously:
 
 ## 1c. State Tracking
 
-The file `~/.openstack-k8s-agents-plans/<operator>/state.json` tracks active work across sessions and instances.
+The file `~/.openstack-k8s-agent-plans/<operator>/state.json` tracks active work across sessions and instances.
 
 ### Format
 
@@ -243,7 +243,7 @@ Three types of dependencies:
 **Cross-plan** (another plan in the same operator):
 
 - Format in plan: `Depends on: OSPRH-6789/Task 1.1`
-- Check: read the other plan file from `~/.openstack-k8s-agents-plans/<operator>/`
+- Check: read the other plan file from `~/.openstack-k8s-agent-plans/<operator>/`
 - Also check state.json `completed` array for the other plan
 
 **External** (a PR in another repo):
@@ -571,7 +571,7 @@ NEVER run `git commit` without both `-s` (Signed-off-by) and `-S` (GPG/SSH signa
 
 After the commit is approved:
 
-1. Update the plan file at `~/.openstack-k8s-agents-plans/<operator>/`
+1. Update the plan file at `~/.openstack-k8s-agent-plans/<operator>/`
 2. Mark all completed tasks as `[x]`
 3. Add an **Outcome** section at the end of the plan file:
 
@@ -608,7 +608,7 @@ If the plan was sourced from a Jira ticket, this step is NOT optional -- you MUS
 
 ### Step 5: Memory Update
 
-Read the plan file (with its Outcome section) and summarize into `~/.openstack-k8s-agents-plans/<operator>/MEMORY.md`:
+Read the plan file (with its Outcome section) and summarize into `~/.openstack-k8s-agent-plans/<operator>/MEMORY.md`:
 
 1. Update Active Work entry to show completion (ticket, summary, "completed")
 2. Add any discoveries made during implementation

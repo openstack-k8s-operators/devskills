@@ -5,7 +5,7 @@ How the plugin persists context across sessions, tracks active work, isolates pa
 ## Architecture
 
 ```
-~/.openstack-k8s-agents-plans/<operator>/
+~/.openstack-k8s-agent-plans/<operator>/
 |
 +-- MEMORY.md                            Shared project memory
 |     read at start of every /feature and /task-executor session
@@ -57,7 +57,7 @@ User: /feature OSPRH-2345
 | Write outputs     |
 +-------------------+
     |
-    +-> Plan file: ~/.openstack-k8s-agents-plans/<operator>/2026-04-11-OSPRH-2345-plan.md
+    +-> Plan file: ~/.openstack-k8s-agent-plans/<operator>/2026-04-11-OSPRH-2345-plan.md
     +-> MEMORY.md: add Active Work entry + discoveries + decisions
     |
     v

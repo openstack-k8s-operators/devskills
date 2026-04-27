@@ -26,7 +26,7 @@ Determine the input source:
 After determining the input source but BEFORE starting the planning process, check for an existing plan:
 
 1. Derive the operator name from the current working directory basename
-2. Scan `~/.openstack-k8s-agents-plans/<operator>/` for files matching the ticket ID or spec slug
+2. Scan `~/.openstack-k8s-agent-plans/<operator>/` for files matching the ticket ID or spec slug
 3. If a matching plan file is found, read it and determine its state:
    - **Incomplete plan** (missing sections like Strategies or Task Breakdown): offer "Found an incomplete plan from <date>. Resume planning, or start fresh?"
    - **Complete plan, no strategy approved** (strategies listed but none marked selected): re-present the strategies for approval

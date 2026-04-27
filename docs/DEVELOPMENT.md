@@ -88,7 +88,7 @@ User types: /feature OSPRH-2345
 +------------------+
        |
        | 1. Parse input: "OSPRH-2345" is a Jira ticket
-       | 2. Check ~/.openstack-k8s-agents-plans/glance-operator/ for existing plan
+       | 2. Check ~/.openstack-k8s-agent-plans/glance-operator/ for existing plan
        | 3. No existing plan found
        |
        v
@@ -132,7 +132,7 @@ User types: /feature OSPRH-2345
 +------------------+
        |
        | 5. Present strategies to user, wait for approval
-       | 6. Write plan to ~/.openstack-k8s-agents-plans/<operator>/
+       | 6. Write plan to ~/.openstack-k8s-agent-plans/<operator>/
        | 7. Create TaskCreate items for tracking
        | 8. Suggest: "Run /task-executor to execute"
        |
