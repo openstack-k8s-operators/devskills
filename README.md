@@ -146,8 +146,8 @@ These are the most common development workflows. Each combines multiple skills t
 |  [feature agent]    |           quick | standard | full                |
 |       |             |                |                                 |
 |       v             |         /code-style                              |
-|  ~/.local/share/    |           gopls modernize                        |
-|    .../plans/       |                |                                 |
+|  ~/.openstack-k8s-  |           gopls modernize                        |
+|   agents-plans/     |                |                                 |
 |       |             |         /code-review                             |
 |       v             |         [code-review agent]                      |
 |  /task-executor     |                                                  |
