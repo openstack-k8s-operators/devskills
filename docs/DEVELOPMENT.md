@@ -31,6 +31,13 @@ Guide for extending and evolving the openstack-k8s-agent-tools plugin.
 |  | - collects changed files  | dispatch| - severity classification|    |
 |  | - dispatches agent        |       | - structured verdict      |     |
 |  +---------------------------+       +---------------------------+     |
+|  +---------------------------+       +---------------------------+     |
+|  | /qe-test                  |       | qe-test                   |     |
+|  | - routes mode (tobiko/    |  -->  | - CRD schema reference    |     |
+|  |   ansible/cr/review/plan) | dispatch| - tobiko test patterns  |     |
+|  | - gathers directory ctx   |       | - AnsibleTest patterns    |     |
+|  +---------------------------+       | - CR generation           |     |
+|                                      +---------------------------+     |
 |                                                                        |
 |  +---------------------------+                                         |
 |  | /debug-operator           |  Self-contained skills                  |
@@ -173,10 +180,12 @@ openstack-k8s-agent-tools/
 |   +-- code-style/SKILL.md    # /code-style - self-contained
 |   +-- analyze-logs/SKILL.md  # /analyze-logs - self-contained
 |   +-- explain-flow/SKILL.md  # /explain-flow - self-contained
+|   +-- qe-test/SKILL.md      # /qe-test - dispatches qe-test agent
 +-- agents/                    # Agent worker definitions
 |   +-- feature/AGENT.md       # Planning methodology
 |   +-- task-executor/AGENT.md # Execution principles
 |   +-- code-review/AGENT.md   # Review criteria
+|   +-- qe-test/AGENT.md      # Downstream QE testing (tobiko, AnsibleTest, CRs)
 |   +-- researcher/AGENT.md    # Read-only research (team role)
 |   +-- implementer/AGENT.md   # Write-capable execution (team role)
 |   +-- reviewer/AGENT.md      # Focused review (team role)

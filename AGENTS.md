@@ -17,7 +17,7 @@ Follow these guidelines when working in this codebase.
 | Directory | Contents |
 |-----------|----------|
 | `skills/` | SKILL.md entry points (one per skill) |
-| `agents/` | AGENT.md domain knowledge (code-review, feature, task-executor, researcher, implementer, reviewer) |
+| `agents/` | AGENT.md domain knowledge (code-review, feature, task-executor, qe-test, researcher, implementer, reviewer) |
 | `lib/` | Shared helper scripts (shell, Python) |
 | `scripts/` | Utility scripts (install, operator-tools, crd-tools) |
 | `docs/` | User-facing documentation and design decisions |
@@ -39,6 +39,7 @@ Follow these guidelines when working in this codebase.
 | `/backport-review` | Compare downstream backports against upstream Gerrit patches |
 | `/jira` | Jira integration: hierarchy validation, outcome posting |
 | `/bug` | Bug fix planning — alias for `/feature` with bug-focused context |
+| `/qe-test` | Downstream QE testing: tobiko tests, AnsibleTest playbooks, test-operator CRs |
 
 ## Agent Teams (Experimental)
 

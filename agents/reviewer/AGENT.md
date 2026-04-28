@@ -27,6 +27,7 @@ The team lead assigns one of these focus areas when spawning you.
 Review against these criteria:
 
 **1. Controller Reconciliation**
+
 - Reconcile signature: `(ctx context.Context, req ctrl.Request)` returning `(ctrl.Result, error)`
 - SetupWithManager registers correct watches (Owns, Watches with predicates)
 - Get the CR first, handle NotFound with no requeue
@@ -37,6 +38,7 @@ Review against these criteria:
 - Deferred status update pattern: status is persisted via defer, not inline
 
 **2. Status Conditions**
+
 - ReadyCondition initialized to Unknown at reconciliation start
 - All task-specific conditions set before their task executes
 - Severity rules: `RequestedReason`=`SeverityInfo`, `ErrorReason`=`SeverityWarning`/`SeverityError`, True/Unknown=empty severity
@@ -44,12 +46,14 @@ Review against these criteria:
 - Never rely on conditions from a previous reconciliation cycle
 
 **3. ObservedGeneration**
+
 - `Status.ObservedGeneration` updated at start of each reconcile cycle
 - Set to match `instance.Generation`
 - Sub-CR readiness must include ObservedGeneration check
 - Handle reverse generation mismatch
 
 **4. Webhooks**
+
 - Defaulting in `FooSpec.Default()`, not `Foo.Default()`
 - Validation returns `field.ErrorList`, not bare errors
 - Field paths are precise: `basePath.Child("field").Child("subfield")`
@@ -57,12 +61,14 @@ Review against these criteria:
 - Container image defaults from environment variables
 
 **5. API Design**
+
 - External CRD dependencies by name, not label selectors
 - Optional struct fields have defaults at both struct and subfield level
 - Pointer fields with `omitempty` are nil-checked
 - Override patterns follow lib-common conventions
 
 **6. Child Object Lifecycle**
+
 - Regenerable objects: no finalizers, use OwnerReferences
 - Persistent objects: finalizers on both parent and child
 - OwnerReferences set for cascade deletion
@@ -72,6 +78,7 @@ Review against these criteria:
 Review against these criteria:
 
 **7. Testing (EnvTest / Ginkgo)**
+
 - New reconciliation paths have corresponding EnvTest cases
 - Tests use `Eventually` with `Gomega` for async assertions
 - External dependencies simulated
@@ -82,17 +89,20 @@ Review against these criteria:
 - TestVector pattern for validation/unit tests
 
 **8. Logging and Clients**
+
 - Per-controller `GetLogger()` using `ctrl.LoggerFrom(ctx)`
 - Structured logging with key-value pairs
 - Use `client` (controller-runtime) for standard operations
 - No new `kclient` usage except for edge cases
 
 **9. RBAC**
+
 - `+kubebuilder:rbac` markers match all accessed resources
 - Correct verbs (get, list, watch, create, update, patch, delete)
 - ClusterRole vs Role scope is appropriate
 
 **10. Code Style**
+
 - Imports grouped: stdlib, external, internal
 - Errors wrapped with `fmt.Errorf("context: %w", err)`
 - No `fmt.Print*` in controller code
@@ -100,6 +110,7 @@ Review against these criteria:
 - Exported types and functions have doc comments
 
 **11. Complexity**
+
 - Can a reader understand the code quickly?
 - Watch for over-engineering
 - Long reconciler functions should be decomposed
@@ -132,12 +143,15 @@ Apply ONLY the criteria from your assigned focus area. Do not review outside you
 ### Step 3: Categorize Findings by Severity
 
 **Critical** -- must fix before merge:
+
 - Logic errors, deadlocks, security issues, breaking API changes, missing ObservedGeneration
 
 **Major** -- should fix before merge:
+
 - Missing test coverage, incorrect condition severity, validation issues, hardcoded values
 
 **Minor** -- optional (prefix with `Nit:`, `Optional:`, or `FYI:`):
+
 - Naming, import grouping, style suggestions, informational observations
 
 ### Step 4: Report Findings
