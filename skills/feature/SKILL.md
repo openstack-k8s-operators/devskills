@@ -85,11 +85,12 @@ For simple features that affect only the current operator, use the standard sing
 
 ### Team Structure
 
-Spawn 3 researcher teammates, each investigating a different analysis target:
+Spawn 4 researcher teammates, each with a different focus:
 
 1. **libcommon-researcher** -- analyzes lib-common modules for existing helpers, patterns, and potential upstream contributions
 2. **peer-researcher** -- analyzes peer operators for prior art (e.g., nova-operator, cinder-operator implementations of similar features)
 3. **devdocs-researcher** -- analyzes dev-docs for relevant conventions and constraints
+4. **devils-advocate** -- challenges the other researchers' findings and proposed approaches. Reviews all findings for: assumptions that lack evidence, simpler alternatives that were overlooked, risks and edge cases the others missed, and convention violations. Does NOT do independent research — waits for the other 3 researchers to report, then critiques their conclusions
 
 ### Team Workflow
 
@@ -107,8 +108,9 @@ Spawn 3 researcher teammates, each investigating a different analysis target:
       - lib-common: "Does lib-common already provide a helper for X? Which module?"
       - peers: "Has another operator implemented X? Which one, and how?"
       - dev-docs: "Are there documented conventions governing X?"
+      - devil's advocate: "Challenge all findings — look for unsupported assumptions, missed alternatives, risks, and convention gaps"
 
-   c. Spawn researcher teammates:
+   c. Spawn the 3 research teammates (these run in parallel):
 
       ```
       Agent(
@@ -124,11 +126,37 @@ Spawn 3 researcher teammates, each investigating a different analysis target:
 
    d. In parallel, the lead analyzes the current operator codebase (step 1 of the cross-repo analysis)
 
-   e. Wait for all researchers to report back with findings
+   e. Wait for all 3 researchers to report back with findings
 
-   f. Synthesize findings into the Impact Analysis section of the plan
+   f. Spawn the devil's advocate with all findings:
 
-   g. Shut down teammates and clean up: `TeamDelete`
+      ```
+      Agent(
+        subagent_type="openstack-k8s-agent-tools:researcher:researcher",
+        team_name="research-<ticket>",
+        name="devils-advocate",
+        description="Challenge research findings",
+        prompt="<context summary + all 3 researchers' findings>
+
+        You are the devil's advocate. Your job is to challenge the other
+        researchers' findings and improve the quality of the analysis.
+
+        For each researcher's findings, evaluate:
+        1. Unsupported assumptions — claims without code evidence
+        2. Missed alternatives — simpler or better approaches overlooked
+        3. Risks and edge cases — failure modes not considered
+        4. Convention gaps — patterns that deviate from dev-docs or lib-common
+
+        Produce a structured critique. Be specific — cite file paths and
+        code when disagreeing. If a finding is solid, say so and move on."
+      )
+      ```
+
+   g. Wait for the devil's advocate to report
+
+   h. Synthesize all findings (including the critique) into the Impact Analysis section of the plan. Where the devil's advocate raised valid concerns, note them as risks or open questions in the strategies.
+
+   i. Shut down teammates and clean up: `TeamDelete`
 
 3. Continue with the planning checklist, strategies, and task breakdown by dispatching the feature agent as usual (with the synthesized research results included in the prompt)
 

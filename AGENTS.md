@@ -49,7 +49,7 @@ their standard sequential behavior.
 | Skill | Team Mode | Teammates |
 |-------|-----------|-----------|
 | `/code-review` | 3 parallel reviewers (conventions, quality, security) | reviewer |
-| `/feature` | 3 parallel researchers (lib-common, peers, dev-docs) | researcher |
+| `/feature` | 4 parallel researchers (lib-common, peers, dev-docs, devil's advocate) | researcher |
 | `/task-executor` | Parallel independent task groups in worktrees | implementer |
 | `/debug-operator` | Parallel hypothesis testing | researcher |
 

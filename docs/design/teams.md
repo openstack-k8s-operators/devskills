@@ -128,10 +128,17 @@ TeamCreate("research-<ticket>")
     |
     | Lead analyzes current operator in parallel
     v
-All researchers report findings
+3 researchers report findings
     |
     v
-Lead synthesizes into Impact Analysis
+Spawn devils-advocate with all findings
+    |
+    v
+Devil's advocate critiques: unsupported assumptions,
+missed alternatives, risks, convention gaps
+    |
+    v
+Lead synthesizes findings + critique into Impact Analysis
     |
     v
 TeamDelete
