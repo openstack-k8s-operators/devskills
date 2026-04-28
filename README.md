@@ -29,6 +29,16 @@ cd openstack-k8s-agent-tools
 make install-opencode
 ```
 
+### Goose (experimental)
+
+Only `skills` are supported in Goose so far.
+
+```bash
+git clone https://github.com/fmount/openstack-k8s-agent-tools.git
+cd openstack-k8s-agent-tools
+make install-goose
+```
+
 ### Manual install (Claude Code, without marketplace)
 
 ```bash
