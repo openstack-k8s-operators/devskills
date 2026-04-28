@@ -3,7 +3,7 @@ name: feature
 description: Plan new features or bug fixes for openstack-k8s-operators operators with Jira integration, cross-repo analysis, and structured implementation strategies
 argument-hint: "<ticket-id | spec-file.md> [--continue]"
 user-invocable: true
-allowed-tools: ["Bash", "Read", "Write", "Grep", "Glob", "WebFetch", "Agent", "TaskCreate", "TaskUpdate"]
+allowed-tools: ["Bash", "Read", "Write", "Grep", "Glob", "WebFetch", "Agent", "TaskCreate", "TaskUpdate", "TaskList", "TaskGet", "TeamCreate", "TeamDelete", "SendMessage"]
 context: fork
 ---
 
@@ -68,6 +68,73 @@ This skill follows the hierarchy rules defined in the `/jira` skill:
 - Outcome comments go on the **story**, never on the epic
 - If the input ticket is an epic with no stories, suggest creating one before planning
 - Tasks from the plan breakdown can optionally be created as Jira tasks under the story
+
+## Team Mode (Parallel Research)
+
+When agent teams are enabled (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`), the skill spawns parallel researcher teammates to investigate multiple analysis targets simultaneously instead of sequentially.
+
+### When to Use Team Mode
+
+Use team mode when:
+
+- The feature touches multiple repos (lib-common + peer operators + dev-docs)
+- Cross-repo analysis is expected to be extensive (e.g., new CRD pattern, topology, TLS)
+- The user explicitly requests parallel research
+
+For simple features that affect only the current operator, use the standard single-agent approach.
+
+### Team Structure
+
+Spawn 3 researcher teammates, each investigating a different analysis target:
+
+1. **libcommon-researcher** -- analyzes lib-common modules for existing helpers, patterns, and potential upstream contributions
+2. **peer-researcher** -- analyzes peer operators for prior art (e.g., nova-operator, cinder-operator implementations of similar features)
+3. **devdocs-researcher** -- analyzes dev-docs for relevant conventions and constraints
+
+### Team Workflow
+
+1. Perform input normalization and resume detection (steps 1-2 from the standard Workflow above)
+
+2. If team mode is warranted:
+
+   a. Create the team:
+
+      ```
+      TeamCreate(team_name="research-<ticket>")
+      ```
+
+   b. Create research tasks via `TaskCreate` for each analysis target. Include specific questions from the feature agent's cross-repo analysis procedure:
+      - lib-common: "Does lib-common already provide a helper for X? Which module?"
+      - peers: "Has another operator implemented X? Which one, and how?"
+      - dev-docs: "Are there documented conventions governing X?"
+
+   c. Spawn researcher teammates:
+
+      ```
+      Agent(
+        subagent_type="openstack-k8s-agent-tools:researcher:researcher",
+        team_name="research-<ticket>",
+        name="libcommon-researcher",
+        description="Analyze lib-common for relevant helpers",
+        prompt="<context summary + specific questions to answer about lib-common>"
+      )
+      ```
+
+      Repeat for peer-researcher and devdocs-researcher.
+
+   d. In parallel, the lead analyzes the current operator codebase (step 1 of the cross-repo analysis)
+
+   e. Wait for all researchers to report back with findings
+
+   f. Synthesize findings into the Impact Analysis section of the plan
+
+   g. Shut down teammates and clean up: `TeamDelete`
+
+3. Continue with the planning checklist, strategies, and task breakdown by dispatching the feature agent as usual (with the synthesized research results included in the prompt)
+
+### Fallback
+
+If agent teams are not enabled (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is unset or not `1`), fall back to the standard sequential cross-repo analysis performed by the feature agent (existing behavior).
 
 ## Quick Reference
 

@@ -3,7 +3,7 @@ name: code-review
 description: Code review agent for openstack-k8s-operators following dev-docs conventions, lib-common patterns, and openstack-k8s-operators best practices
 argument-hint: "<PR-number | branch | file-path>"
 user-invocable: true
-allowed-tools: ["Bash", "Read", "Grep", "Glob", "WebFetch", "Agent"]
+allowed-tools: ["Bash", "Read", "Grep", "Glob", "WebFetch", "Agent", "TeamCreate", "TeamDelete", "SendMessage", "TaskCreate", "TaskUpdate", "TaskList", "TaskGet"]
 context: fork
 ---
 
@@ -180,6 +180,62 @@ The agent evaluates against these openstack-k8s-operators conventions:
 - **Logging**: ctrl.LoggerFrom(ctx), structured key-value, no fmt.Print
 - **RBAC**: kubebuilder markers match actual resource access
 - **Code Style**: import grouping, error wrapping, receiver naming, gopls modernize patterns
+
+## Team Mode (Parallel Review)
+
+When agent teams are enabled (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`), the skill can run a parallel multi-reviewer team for thorough, multi-perspective reviews.
+
+### When to Use Team Mode
+
+Use team mode when:
+
+- The diff spans 3+ functional areas (API, controller, tests, webhooks)
+- The diff is large (>500 lines changed or 5+ files)
+- The user explicitly requests a thorough or parallel review
+
+For small, focused changes (single file, <100 lines), use the standard single-agent review.
+
+### Team Structure
+
+Spawn 3 reviewer teammates, each assigned a different focus area:
+
+1. **conventions-reviewer** -- Focus A: criteria 1-6 (reconciliation, conditions, observedGeneration, webhooks, API design, child objects)
+2. **quality-reviewer** -- Focus B: criteria 7-11 (testing, logging/clients, RBAC, code style, complexity)
+3. **security-reviewer** -- Focus C: cross-cutting security analysis (RBAC, secrets, finalizer safety, breaking API changes, privilege escalation)
+
+### Team Workflow
+
+1. Create the team:
+
+   ```
+   TeamCreate(team_name="review-<scope>")
+   ```
+
+2. Create a task for each reviewer via `TaskCreate` (include the focus area in the description)
+
+3. Spawn 3 reviewer teammates:
+
+   ```
+   Agent(
+     subagent_type="openstack-k8s-agent-tools:reviewer:reviewer",
+     team_name="review-<scope>",
+     name="conventions-reviewer",
+     description="Review conventions criteria 1-6",
+     prompt="<diff + changed files + dependency context + focus area assignment: 'You are assigned Focus A: Conventions (criteria 1-6)'>"
+   )
+   ```
+
+   Repeat for quality-reviewer (Focus B) and security-reviewer (Focus C).
+
+4. Wait for all 3 reviewers to complete their initial findings
+5. Share each reviewer's findings with the other two via `SendMessage` for cross-validation
+6. Wait for second-pass responses (agreements/disagreements)
+7. Synthesize all findings into a unified review report using the standard output format
+8. Shut down teammates and clean up: `TeamDelete`
+
+### Fallback
+
+If agent teams are not enabled (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is unset or not `1`), fall back to the standard single-agent review (dispatch the `code-review` agent as described in the Workflow section above). The behavior is identical to the non-team workflow.
 
 ## Examples
 

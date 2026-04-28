@@ -3,7 +3,7 @@ name: debug-operator
 description: Debug and develop openstack-k8s-operators operators with comprehensive workflows including make targets, tests, and deployments
 argument-hint: "[operator-name] [namespace]"
 user-invocable: true
-allowed-tools: ["Bash", "Read", "Grep", "LS", "TodoWrite"]
+allowed-tools: ["Bash", "Read", "Grep", "LS", "TodoWrite", "Agent", "TeamCreate", "TeamDelete", "SendMessage", "TaskCreate", "TaskUpdate", "TaskList", "TaskGet"]
 context: fork
 ---
 
@@ -153,3 +153,62 @@ The skill integrates with:
 - Webhook configuration issues
 
 Always start with this skill for any operator debugging to ensure comprehensive analysis.
+
+## Team Mode (Parallel Hypothesis Testing)
+
+When agent teams are enabled (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`), the skill can spawn researcher teammates to test competing debugging hypotheses in parallel.
+
+### When to Use Team Mode
+
+Use team mode when:
+
+- Multiple plausible hypotheses exist for the root cause
+- The debugging involves both runtime (cluster) and code analysis
+- The user explicitly requests parallel investigation
+
+For straightforward debugging (single hypothesis, clear error message), use the standard sequential analysis.
+
+### Team Workflow
+
+1. Perform initial triage: gather symptoms, form 2-3 hypotheses about the root cause
+
+2. Create the team:
+
+   ```
+   TeamCreate(team_name="debug-<operator>")
+   ```
+
+3. Create a task for each hypothesis via `TaskCreate`
+
+4. Spawn researcher teammates, each investigating a different hypothesis:
+
+   ```
+   Agent(
+     subagent_type="openstack-k8s-agent-tools:researcher:researcher",
+     team_name="debug-<operator>",
+     name="hypothesis-1",
+     description="Investigate: <hypothesis summary>",
+     prompt="<symptoms + hypothesis + investigation plan + relevant file paths>"
+   )
+   ```
+
+   Repeat for hypothesis-2, hypothesis-3, etc.
+
+5. Wait for all investigators to report findings
+
+6. Share each investigator's results with the others via `SendMessage` for adversarial cross-validation:
+   - Each investigator checks if the evidence contradicts their own hypothesis
+   - Investigators identify gaps in others' reasoning
+   - They report agreements and disagreements
+
+7. Wait for cross-validation responses
+
+8. Synthesize findings -- identify which hypothesis is best supported by evidence
+
+9. Present consolidated diagnosis to the user
+
+10. Shut down teammates and clean up: `TeamDelete`
+
+### Fallback
+
+If agent teams are not enabled (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is unset or not `1`), fall back to the standard sequential debugging workflow (existing behavior).
