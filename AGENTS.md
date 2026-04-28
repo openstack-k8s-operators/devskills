@@ -56,6 +56,7 @@ Follow these guidelines when working in this codebase.
 |---------|---------|
 | `make install` | Install plugin for Claude Code |
 | `make install-opencode` | Install plugin for OpenCode |
+| `make install-goose` | Install plugin for Goose (skills only) |
 | `make test` | Run plugin validation tests |
 | `make test-memory` | Run memory/state/worktree tests |
 | `pre-commit run --all-files` | Lint all files (shellcheck, markdownlint, yaml, json) |

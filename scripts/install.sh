@@ -3,7 +3,7 @@
 set -e
 
 # openstack-k8s-operators Operator Tools Installer
-# Supports Claude Code (marketplace) and OpenCode (manual install)
+# Supports Claude Code (marketplace), OpenCode, and Goose (manual install)
 
 PLUGIN_NAME="openstack-k8s-agent-tools"
 PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -196,6 +196,20 @@ install_opencode() {
     info "Start OpenCode and your skills should be available."
 }
 
+install_goose() {
+    info "Installing for Goose (experimental)..."
+
+    local skills_dir="$HOME/.agents/skills"
+
+    # Install skills (same SKILL.md format)
+    install_skills "$skills_dir"
+
+    info ""
+    info "Installed to ~/.agents/"
+    info "Skills: $skills_dir"
+    info "Start Goose and your skills should be available."
+}
+
 uninstall() {
     local platform="$1"
 
@@ -219,6 +233,15 @@ uninstall() {
                 rm -f "$HOME/.config/opencode/agents/$name.md"
             done
             info "Removed skills and agents from ~/.config/opencode/"
+            ;;
+        goose)
+            info "Uninstalling from Goose..."
+            for skill_dir in "$PLUGIN_DIR/skills"/*/; do
+                local name
+                name=$(basename "$skill_dir")
+                rm -rf "$HOME/.agents/skills/$name"
+            done
+            info "Removed skills from ~/.agents/"
             ;;
     esac
 }
@@ -260,6 +283,12 @@ check_dependencies() {
         warn "OpenCode not found"
     fi
 
+    if command -v goose &> /dev/null; then
+        info "Goose: available"
+    else
+        warn "Goose not found"
+    fi
+
     if [ "$has_issues" = true ]; then
         warn "Some required dependencies are missing"
     else
@@ -271,13 +300,15 @@ show_usage() {
     cat <<EOF
 Usage: $0 [OPTIONS]
 
-Install openstack-k8s-agent-tools for Claude Code or OpenCode.
+Install openstack-k8s-agent-tools for Claude Code, OpenCode, or Goose.
 
 Options:
   --claude-code        Install globally for Claude Code (~/.claude/)
   --opencode           Install globally for OpenCode (~/.config/opencode/)
+  --goose              Install globally for Goose (~/.agents/skills/)
   --uninstall-claude   Remove from Claude Code
   --uninstall-opencode Remove from OpenCode
+  --uninstall-goose    Remove from Goose
   --check              Check dependencies only
   --help               Show this help message
 
@@ -288,6 +319,7 @@ Marketplace install (Claude Code only, recommended):
 Examples:
   $0 --claude-code          # Global install for Claude Code
   $0 --opencode             # Global install for OpenCode
+  $0 --goose                # Global install for Goose
   $0 --check                # Check dependencies
 EOF
 }
@@ -299,8 +331,10 @@ main() {
         case $1 in
             --claude-code)       action="claude";           shift ;;
             --opencode)          action="opencode";         shift ;;
+            --goose)             action="goose";            shift ;;
             --uninstall-claude)  action="uninstall-claude"; shift ;;
             --uninstall-opencode) action="uninstall-opencode"; shift ;;
+            --uninstall-goose)   action="uninstall-goose";  shift ;;
             --check)             action="check";            shift ;;
             --help)              show_usage; exit 0 ;;
             *)                   error "Unknown option: $1" ;;
@@ -317,8 +351,10 @@ main() {
     case "$action" in
         claude)            install_claude_code ;;
         opencode)          install_opencode ;;
+        goose)             install_goose ;;
         uninstall-claude)  uninstall claude ;;
         uninstall-opencode) uninstall opencode ;;
+        uninstall-goose)   uninstall goose ;;
         check)             check_dependencies ;;
     esac
 }

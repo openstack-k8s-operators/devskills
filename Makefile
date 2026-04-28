@@ -1,4 +1,4 @@
-.PHONY: install-claude install-opencode uninstall-claude uninstall-opencode \
+.PHONY: install-claude install-opencode install-goose uninstall-claude uninstall-opencode uninstall-goose \
        check test test-memory validate help
 
 INSTALL := ./scripts/install.sh
@@ -11,6 +11,9 @@ install-claude: ## Install globally for Claude Code (~/.claude/)
 install-opencode: ## Install globally for OpenCode (~/.config/opencode/)
 	@$(INSTALL) --opencode
 
+install-goose: ## Install globally for Goose (~/.agents/skills/)
+	@$(INSTALL) --goose
+
 ## Uninstall
 
 uninstall-claude: ## Remove from Claude Code
@@ -18,6 +21,9 @@ uninstall-claude: ## Remove from Claude Code
 
 uninstall-opencode: ## Remove from OpenCode
 	@$(INSTALL) --uninstall-opencode
+
+uninstall-goose: ## Remove from Goose
+	@$(INSTALL) --uninstall-goose
 
 ## Validation
 
