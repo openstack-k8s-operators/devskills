@@ -16,21 +16,28 @@ Guide for extending and evolving the openstack-k8s-agent-tools plugin.
 |  | - parses input (Jira/spec)|  -->  | - cross-repo analysis     |     |
 |  | - checks resume state     | dispatch| - planning checklist    |     |
 |  | - dispatches agent        |       | - strategy evaluation     |     |
-|  +---------------------------+       | - task breakdown           |     |
+|  +---------------------------+       | - task breakdown          |     |
 |                                      +---------------------------+     |
 |  +---------------------------+       +---------------------------+     |
-|  | /task-executor            |       | task-executor              |     |
+|  | /task-executor            |       | task-executor             |     |
 |  | - loads plan file         |  -->  | - sequential execution    |     |
-|  | - detects progress        | dispatch| - code quality standards |     |
+|  | - detects progress        | dispatch| - code quality standards|     |
 |  | - dispatches agent        |       | - checkpointing           |     |
 |  +---------------------------+       | - commit & completion     |     |
 |                                      +---------------------------+     |
 |  +---------------------------+       +---------------------------+     |
 |  | /code-review              |       | code-review               |     |
 |  | - determines scope        |  -->  | - 10 review criteria      |     |
-|  | - collects changed files  | dispatch| - severity classification|     |
+|  | - collects changed files  | dispatch| - severity classification|    |
 |  | - dispatches agent        |       | - structured verdict      |     |
 |  +---------------------------+       +---------------------------+     |
+|  +---------------------------+       +---------------------------+     |
+|  | /qe-test                  |       | qe-test                   |     |
+|  | - routes mode (tobiko/    |  -->  | - CRD schema reference    |     |
+|  |   ansible/cr/review/plan) | dispatch| - tobiko test patterns  |     |
+|  | - gathers directory ctx   |       | - AnsibleTest patterns    |     |
+|  +---------------------------+       | - CR generation           |     |
+|                                      +---------------------------+     |
 |                                                                        |
 |  +---------------------------+                                         |
 |  | /debug-operator           |  Self-contained skills                  |
@@ -39,6 +46,13 @@ Guide for extending and evolving the openstack-k8s-agent-tools plugin.
 |  | /analyze-logs             |                                         |
 |  | /explain-flow             |                                         |
 |  +---------------------------+                                         |
+|                                                                        |
+|  TEAMS (optional, experimental — CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS) |
+|  Skills spawn teammates from agent definitions for parallel work.      |
+|  +---researcher---+  +---implementer---+  +---reviewer---+             |
+|  | Read-only       |  | Write-capable    |  | Read-only    |           |
+|  | analysis        |  | in worktree      |  | focused review|          |
+|  +----------------+  +-----------------+  +--------------+             |
 |                                                                        |
 |  LIB (lib/)                          SCRIPTS (scripts/)                |
 |  Shell + Node.js tools               Operator management utilities     |
@@ -166,10 +180,15 @@ openstack-k8s-agent-tools/
 |   +-- code-style/SKILL.md    # /code-style - self-contained
 |   +-- analyze-logs/SKILL.md  # /analyze-logs - self-contained
 |   +-- explain-flow/SKILL.md  # /explain-flow - self-contained
+|   +-- qe-test/SKILL.md      # /qe-test - dispatches qe-test agent
 +-- agents/                    # Agent worker definitions
 |   +-- feature/AGENT.md       # Planning methodology
 |   +-- task-executor/AGENT.md # Execution principles
 |   +-- code-review/AGENT.md   # Review criteria
+|   +-- qe-test/AGENT.md      # Downstream QE testing (tobiko, AnsibleTest, CRs)
+|   +-- researcher/AGENT.md    # Read-only research (team role)
+|   +-- implementer/AGENT.md   # Write-capable execution (team role)
+|   +-- reviewer/AGENT.md      # Focused review (team role)
 +-- lib/                       # Shared helper scripts and tools
 |   +-- dev-workflow.sh        # Development workflow automation
 |   +-- test-workflow.sh       # Testing workflow automation
@@ -178,12 +197,14 @@ openstack-k8s-agent-tools/
 |   +-- code-parser.py         # Operator code flow parser
 |   +-- log-analyzer.py        # Log pattern analysis
 |   +-- log-patterns.json      # Log pattern definitions
+|   +-- team-helpers.sh        # Agent teams lifecycle helpers
 +-- scripts/                   # Utility scripts
 |   +-- operator-tools.sh      # Operator management
 |   +-- crd-tools.sh           # CRD analysis
 |   +-- install.sh             # Cross-platform installer
 +-- tests/                     # Validation
 |   +-- test-plugin.sh         # Discovery-based plugin validation
+|   +-- test-teams.sh          # Agent teams infrastructure tests
 |   +-- validate-skills.sh     # Operator-level skill validation
 +-- docs/                      # Documentation
 +-- .github/workflows/         # CI validation
@@ -306,6 +327,44 @@ Skills dispatch agents using the naming convention:
 <plugin-name>:<agent-directory>:<agent-name>
 ```
 
+## Creating Team-Aware Skills
+
+Agent teams (experimental) allow skills to spawn parallel teammates for
+complex work. See [design/teams.md](design/teams.md) for architecture.
+
+### Pattern
+
+1. Check if teams are enabled: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+2. Decide if the workload warrants parallelization (heuristics or user request)
+3. Use `TeamCreate` to create a team, `TaskCreate` for work items
+4. Spawn teammates with `Agent(team_name=..., name=..., subagent_type=...)`
+5. Wait for findings/results via automatic message delivery
+6. Synthesize results and clean up with `TeamDelete`
+
+### Key Constraints
+
+- **`skills:` frontmatter is NOT applied to teammates.** Inline critical rules.
+- **Each teammate has its own context window.** Pass all needed context in the spawn prompt.
+- **Write-capable teammates need separate worktrees** to avoid file conflicts.
+- **Always provide a Fallback section** for when teams are not enabled.
+
+### Team Agent Roles
+
+| Agent | Purpose | Write Access |
+|-------|---------|-------------|
+| `researcher` | Read-only codebase/docs investigation | No |
+| `implementer` | Task execution in isolated worktree | Yes |
+| `reviewer` | Focused code review with cross-validation | No |
+
+### Frontmatter for Team-Aware Skills
+
+Add team coordination tools to `allowed-tools`:
+
+```yaml
+allowed-tools: ["...", "TeamCreate", "TeamDelete", "SendMessage",
+                "TaskCreate", "TaskUpdate", "TaskList", "TaskGet"]
+```
+
 ## Testing
 
 ### Automated Tests
@@ -364,5 +423,6 @@ Update `.claude-plugin/plugin.json` and `package.json` when releasing:
 - [Claude Code Skills](https://code.claude.com/docs/en/skills) - official skills documentation
 - [Claude Code Subagents](https://code.claude.com/docs/en/sub-agents) - official agents documentation
 - [Claude Code Plugins](https://code.claude.com/docs/en/plugins) - plugin packaging and distribution
+- [Claude Code Agent Teams](https://code.claude.com/docs/en/agent-teams) - agent teams documentation
 - [openstack-k8s-operators/dev-docs](https://github.com/openstack-k8s-operators/dev-docs) - operator development conventions
 - [lib-common](https://github.com/openstack-k8s-operators/lib-common) - shared operator libraries

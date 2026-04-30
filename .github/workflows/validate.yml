@@ -23,6 +23,9 @@ jobs:
       - name: Validate plugin functionality
         run: bash tests/test-plugin.sh functional
 
+      - name: Validate agent teams infrastructure
+        run: bash tests/test-teams.sh
+
       - name: Check shell script syntax
         run: |
           errors=0

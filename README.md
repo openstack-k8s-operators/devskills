@@ -60,6 +60,7 @@ make install-claude
 | `/task-executor` | `task-executor` | Execute plans task-by-task with checkpointing and resume |
 | `/backport-review` | — | Compare downstream backport change requests against upstream Gerrit patches |
 | `/jira` | — | Jira integration — ticket inspection, hierarchy validation, outcome posting |
+| `/qe-test` | `qe-test` | Downstream QE testing — tobiko tests, AnsibleTest playbooks, test-operator CRs |
 
 Skills with an agent load an `AGENT.md` file that contains the full domain knowledge and methodology. Skills without an agent are self-contained in their `SKILL.md`.
 
