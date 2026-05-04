@@ -13,15 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      - name: Validate skills and agents
+        run: bash tests/validate-skills.sh skills
 
-      - name: Validate plugin structure
-        run: bash tests/test-plugin.sh structure
+      - name: Validate plugin metadata and scripts
+        run: bash tests/validate-skills.sh plugin
 
-      - name: Validate plugin functionality
-        run: bash tests/test-plugin.sh functional
+      - name: Security checks
+        run: bash tests/validate-skills.sh security
 
       - name: Check shell script syntax
         run: |

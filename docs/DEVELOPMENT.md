@@ -173,8 +173,7 @@ openstack-k8s-agent-tools/
 |   +-- install.sh             # Cross-platform installer
 |   +-- scaffold.sh            # Scaffold new skills and agents
 +-- tests/                     # Validation
-|   +-- test-plugin.sh         # Discovery-based plugin validation
-|   +-- validate-skills.sh     # Operator-level skill validation
+|   +-- validate-skills.sh     # Plugin, skill, and agent validation
 +-- docs/                      # Documentation
 +-- .github/workflows/         # CI validation
 +-- .pre-commit-config.yaml    # Pre-commit hooks
@@ -301,17 +300,20 @@ Skills dispatch agents using the naming convention:
 ### Automated Tests
 
 ```bash
-# Run all structure tests (discovery-based)
-bash tests/test-plugin.sh structure
+# Run all validations (skills, plugin, security)
+make test
 
-# Run functional tests
-bash tests/test-plugin.sh functional
+# Validate skills and agents only
+make validate
 
-# Run everything
-bash tests/test-plugin.sh all
+# Validate a specific skill or agent
+bash tests/validate-skills.sh skills my-skill
+
+# Run memory, state, and worktree tests
+make test-memory
 ```
 
-The test suite is discovery-based. Adding new skills, agents, or lib scripts does not require updating `test-plugin.sh`.
+The test suite is discovery-based. Adding new skills or agents does not require updating the validator.
 
 ### Manual Testing
 
