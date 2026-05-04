@@ -18,7 +18,6 @@ Follow these guidelines when working in this codebase.
 |-----------|----------|
 | `skills/` | SKILL.md entry points (one per skill) |
 | `agents/` | AGENT.md domain knowledge (code-review, feature, task-executor) |
-| `lib/` | Shared helper scripts (shell, Python) |
 | `scripts/` | Utility scripts (install, scaffold) |
 | `docs/` | User-facing documentation and design decisions |
 | `examples/` | Example outputs (sample plans) |

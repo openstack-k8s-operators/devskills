@@ -5,10 +5,6 @@
 ```bash
 /debug-operator                           # Auto-run workflow
 /debug-operator focus-test "pattern"      # Focused testing
-
-./lib/dev-workflow.sh run_full_workflow
-./lib/dev-workflow.sh show_tests
-./lib/dev-workflow.sh focus_test "test name"
 ```
 
 **Runs**: pre-commit -> manifests -> generate -> lint -> build -> test
@@ -50,11 +46,6 @@ make test GINKGO_ARGS="--focus 'pattern'"
 
 ```bash
 /analyze-logs                  # Interactive
-
-kubectl logs deployment/op -n ns > op.log
-python3 ./lib/log-analyzer.py op.log
-python3 ./lib/log-analyzer.py --verbose op.log
-python3 ./lib/log-analyzer.py --patterns
 ```
 
 **Finds**: errors (API/RBAC/runtime), performance issues, OpenStack problems
@@ -65,9 +56,6 @@ python3 ./lib/log-analyzer.py --patterns
 
 ```bash
 /explain-flow                  # Parse current dir
-
-python3 ./lib/code-parser.py .
-python3 ./lib/code-parser.py controllers/
 ```
 
 **Extracts**: reconcile functions, flow steps, error handling, CRDs
@@ -90,6 +78,8 @@ python3 ./lib/code-parser.py controllers/
 
 ```bash
 /feature                       # Interactive planning
+/feature OSPRH-2345            # Plan from Jira ticket
+/feature spec.md               # Plan from spec file
 ```
 
 **Provides**: architecture analysis, design suggestions, task breakdown
@@ -128,8 +118,7 @@ kubectl logs pod > log.txt
 ## Installation
 
 ```bash
-./scripts/install.sh --claude-code
-./lib/test-workflow.sh install-tools
+make install-claude
 ```
 
 ---
@@ -139,4 +128,3 @@ kubectl logs pod > log.txt
 - Use `quick` for fast feedback during development
 - Focused tests speed up iteration
 - Auto-fix before manual fixes
-- All lib/ tools support `--json` for automation

@@ -21,9 +21,9 @@ When explaining code flow, I will:
 4. **Document Decision Trees**: Map conditional logic and branching paths
 5. **Trace Resource Lifecycle**: Show how CRDs move through different states
 
-## Code Parser Features
+## Code Analysis Features
 
-The skill includes a specialized parser (`code-parser.py`) that analyzes:
+The skill analyzes:
 
 - **Controllers**: Reconcile functions and SetupWithManager
 - **Flow Steps**: Resource operations (Get, Create, Update, Delete)
@@ -38,9 +38,6 @@ The skill includes a specialized parser (`code-parser.py`) that analyzes:
 ### 1. **Reconciler Flow Analysis**
 
 ```bash
-# Analyze specific controller
-python3 ./lib/code-parser.py /path/to/operator
-
 # Focus on reconcile functions
 grep -r "func.*Reconcile" --include="*.go" .
 ```

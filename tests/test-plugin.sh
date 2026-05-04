@@ -114,26 +114,6 @@ run_plugin_tests() {
         fi
     done
 
-    # Discover and test lib helpers
-    echo -e "\n${YELLOW}Testing Lib${NC}"
-    for f in lib/*.sh; do
-        [ -f "$f" ] || continue
-        name=$(basename "$f")
-        test_file_exists "$f" "Lib '$name' exists"
-        test_executable "$f" "Lib '$name' is executable"
-    done
-    for f in lib/*.js; do
-        [ -f "$f" ] || continue
-        name=$(basename "$f")
-        test_file_exists "$f" "Lib '$name' exists"
-    done
-    for f in lib/*.json; do
-        [ -f "$f" ] || continue
-        name=$(basename "$f")
-        test_file_exists "$f" "Lib '$name' exists"
-        test_json_valid "$f" "Lib '$name' is valid JSON"
-    done
-
     # Discover and test scripts
     echo -e "\n${YELLOW}Testing Scripts${NC}"
     for f in scripts/*.sh; do
@@ -158,12 +138,6 @@ run_functional_tests() {
 
     # Test script help
     run_test "Install script help" "./scripts/install.sh --help >/dev/null 2>&1"
-
-    # Test lib tools
-    run_test "Log analyzer patterns" "python3 lib/log-analyzer.py --patterns >/dev/null 2>&1"
-    run_test "Code parser help" "python3 lib/code-parser.py --help >/dev/null 2>&1"
-    run_test "Dev workflow help" "./lib/dev-workflow.sh help >/dev/null 2>&1"
-    run_test "Test workflow help" "./lib/test-workflow.sh help >/dev/null 2>&1"
 }
 
 # Plugin validation tests
@@ -193,17 +167,12 @@ run_performance_tests() {
     # Test script execution time using integer seconds
     local start_time
     start_time=$(date +%s)
-    ./lib/dev-workflow.sh help >/dev/null 2>&1
+    ./scripts/install.sh --help >/dev/null 2>&1
     local end_time
     end_time=$(date +%s)
     local duration=$((end_time - start_time))
 
-    run_test "Dev workflow runs quickly (<2s)" "[ $duration -lt 2 ]"
-
-    # Test log analyzer with small input
-    echo "test error message" | timeout 5s python3 lib/log-analyzer.py - >/dev/null 2>&1
-    local exit_code=$?
-    run_test "Log analyzer handles input quickly" "[ $exit_code -eq 0 ]"
+    run_test "Install script runs quickly (<2s)" "[ $duration -lt 2 ]"
 }
 
 # Security tests

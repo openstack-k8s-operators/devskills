@@ -48,21 +48,6 @@ The skill includes comprehensive patterns for:
 - **Database**: Connection and SQL errors
 - **Network**: Neutron service problems
 
-## Log Analyzer Tool
-
-Includes specialized analyzer (`log-analyzer.py`) that:
-
-```bash
-# Analyze log file with detailed output
-python3 ./lib/log-analyzer.py --verbose operator.log
-
-# JSON output for integration
-python3 ./lib/log-analyzer.py --json operator.log
-
-# Show available patterns
-python3 ./lib/log-analyzer.py --patterns
-```
-
 ## Analysis Output
 
 ### Summary Report

@@ -9,7 +9,7 @@ context: fork
 
 # Analyze must-gather
 
-##  General rules:
+## General rules
 
 - If something prevents you from taking meaningful steps forward, stop and report the problem to the user.
 

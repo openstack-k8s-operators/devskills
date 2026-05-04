@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 
-# Validate openstack-k8s-operators Operator Tools skills against a real operator
-# Usage: ./tests/validate-skills.sh [operator-repo-url]
+# Validate skill and agent structure for openstack-k8s-agent-tools
+# Usage: ./tests/validate-skills.sh [skill-or-agent-name]
+#   No argument: validate all skills and agents
+#   With argument: validate only the named skill or agent
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." &>/dev/null && pwd)"
-REPO_URL="${1:-https://github.com/openstack-k8s-operators/glance-operator.git}"
-OPERATOR_NAME="$(basename "$REPO_URL" .git)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -18,177 +17,245 @@ NC='\033[0m'
 
 PASS=0
 FAIL=0
-SKIP=0
+WARN=0
 
 pass() { echo -e "  ${GREEN}PASS${NC} $1"; PASS=$((PASS + 1)); }
 fail() { echo -e "  ${RED}FAIL${NC} $1"; FAIL=$((FAIL + 1)); }
-skip() { echo -e "  ${YELLOW}SKIP${NC} $1"; SKIP=$((SKIP + 1)); }
+warn() { echo -e "  ${YELLOW}WARN${NC} $1"; WARN=$((WARN + 1)); }
 
-# Setup
-TMPDIR=$(mktemp -d)
-OPERATOR_DIR="$TMPDIR/$OPERATOR_NAME"
-trap "rm -rf $TMPDIR" EXIT
+get_frontmatter() {
+    local file="$1"
+    sed -n '2,/^---$/p' "$file" | head -n -1
+}
 
-echo -e "${BLUE}Validating skills against $OPERATOR_NAME${NC}"
-echo "================================================"
-echo
+has_field() {
+    local frontmatter="$1"
+    local field="$2"
+    echo "$frontmatter" | grep -q "^${field}:"
+}
 
-# Clone
-echo -e "${BLUE}[Setup] Cloning $OPERATOR_NAME...${NC}"
-if git clone --depth 1 "$REPO_URL" "$OPERATOR_DIR" &>/dev/null; then
-    pass "Clone $OPERATOR_NAME"
-else
-    fail "Clone $OPERATOR_NAME"
-    exit 1
-fi
-echo
+get_field() {
+    local frontmatter="$1"
+    local field="$2"
+    echo "$frontmatter" | grep "^${field}:" | sed "s/^${field}:[[:space:]]*//"
+}
 
-# --- test-operator ---
-echo -e "${BLUE}[test-operator] Quick tests (fmt+vet+tidy)${NC}"
-if (cd "$OPERATOR_DIR" && "$SCRIPT_DIR/lib/test-workflow.sh" quick &>/dev/null); then
-    pass "test-operator quick"
-else
-    fail "test-operator quick"
-fi
+validate_skill() {
+    local name="$1"
+    local dir="${REPO_ROOT}/skills/${name}"
+    local file="${dir}/SKILL.md"
 
-echo -e "${BLUE}[test-operator] Help output${NC}"
-if "$SCRIPT_DIR/lib/test-workflow.sh" help &>/dev/null; then
-    pass "test-operator help"
-else
-    fail "test-operator help"
-fi
-echo
+    echo -e "\n${BLUE}[skill: ${name}]${NC}"
 
-# --- debug-operator ---
-echo -e "${BLUE}[debug-operator] Show tests${NC}"
-OUTPUT=$(cd "$OPERATOR_DIR" && "$SCRIPT_DIR/lib/dev-workflow.sh" show_tests 2>&1)
-if echo "$OUTPUT" | grep -q "_test.go"; then
-    pass "debug-operator show_tests (found test files)"
-else
-    fail "debug-operator show_tests"
-fi
+    if [[ ! -f "$file" ]]; then
+        fail "SKILL.md exists"
+        return
+    fi
+    pass "SKILL.md exists"
 
-echo -e "${BLUE}[debug-operator] Validate CRDs${NC}"
-OUTPUT=$(cd "$OPERATOR_DIR" && "$SCRIPT_DIR/lib/dev-workflow.sh" crds 2>&1)
-if echo "$OUTPUT" | grep -q "is valid"; then
-    pass "debug-operator validate_crds"
-else
-    fail "debug-operator validate_crds"
-fi
+    # Check frontmatter delimiters
+    local first_line
+    first_line=$(head -1 "$file")
+    if [[ "$first_line" != "---" ]]; then
+        fail "frontmatter starts with ---"
+        return
+    fi
+    pass "frontmatter starts with ---"
 
-echo -e "${BLUE}[debug-operator] Check Go modules${NC}"
-if (cd "$OPERATOR_DIR" && "$SCRIPT_DIR/lib/dev-workflow.sh" modules &>/dev/null); then
-    pass "debug-operator check_go_modules"
-else
-    fail "debug-operator check_go_modules"
-fi
+    local frontmatter
+    frontmatter=$(get_frontmatter "$file")
 
-echo -e "${BLUE}[debug-operator] Help output${NC}"
-if "$SCRIPT_DIR/lib/dev-workflow.sh" help &>/dev/null; then
-    pass "debug-operator help"
-else
-    fail "debug-operator help"
-fi
-echo
+    # Required fields
+    for field in name description user-invocable; do
+        if has_field "$frontmatter" "$field"; then
+            pass "has '${field}' field"
+        else
+            fail "has '${field}' field"
+        fi
+    done
 
-echo
-
-# --- explain-flow ---
-echo -e "${BLUE}[explain-flow] Parse controllers${NC}"
-CONTROLLER_DIR=$(find "$OPERATOR_DIR" -type d -name "controller" -not -path "*/vendor/*" | head -1)
-if [ -n "$CONTROLLER_DIR" ]; then
-    OUTPUT=$(python3 "$SCRIPT_DIR/lib/code-parser.py" "$CONTROLLER_DIR" 2>&1)
-    CONTROLLERS=$(echo "$OUTPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(len(d['controllers']))" 2>/dev/null || echo "0")
-    if [ "$CONTROLLERS" -gt 0 ]; then
-        pass "explain-flow found $CONTROLLERS controllers"
+    # Name matches directory
+    local fm_name
+    fm_name=$(get_field "$frontmatter" "name" | tr -d '"' | tr -d "'")
+    if [[ "$fm_name" == "$name" ]]; then
+        pass "name field matches directory (${name})"
     else
-        fail "explain-flow found no controllers"
+        fail "name field '${fm_name}' does not match directory '${name}'"
     fi
 
-    # Check reconciler flow extraction
-    STEPS=$(echo "$OUTPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(sum(len(f['steps']) for r in d['reconcilers'] for f in r['flows']))" 2>/dev/null || echo "0")
-    if [ "$STEPS" -gt 0 ]; then
-        pass "explain-flow extracted $STEPS flow steps"
+    # Content length (>10 lines)
+    local lines
+    lines=$(wc -l < "$file")
+    if [[ "$lines" -gt 10 ]]; then
+        pass "has content (${lines} lines)"
     else
-        fail "explain-flow extracted no flow steps"
+        fail "too short (${lines} lines, need >10)"
+    fi
+
+    # Check for TODO placeholders
+    if grep -q "^TODO:" "$file"; then
+        warn "contains TODO placeholders"
+    fi
+
+    # If skill has Agent in allowed-tools, check dispatch syntax
+    if has_field "$frontmatter" "allowed-tools"; then
+        local tools
+        tools=$(get_field "$frontmatter" "allowed-tools")
+        if echo "$tools" | grep -q '"Agent"'; then
+            # Should have a matching agent or reference one
+            if grep -q "subagent_type=" "$file"; then
+                pass "has agent dispatch block"
+                # Validate subagent_type format
+                if grep -q "openstack-k8s-agent-tools:" "$file"; then
+                    pass "subagent_type uses correct prefix"
+                else
+                    fail "subagent_type missing 'openstack-k8s-agent-tools:' prefix"
+                fi
+            elif grep -q "skills/.*/SKILL.md" "$file"; then
+                pass "delegates dispatch to another skill"
+            elif [[ -d "${REPO_ROOT}/agents/${name}" ]]; then
+                warn "has Agent in allowed-tools but no dispatch block (may delegate via another skill)"
+            else
+                fail "has Agent in allowed-tools but no dispatch block and no matching agent"
+            fi
+        fi
+    fi
+}
+
+validate_agent() {
+    local name="$1"
+    local dir="${REPO_ROOT}/agents/${name}"
+    local file="${dir}/AGENT.md"
+
+    echo -e "\n${BLUE}[agent: ${name}]${NC}"
+
+    if [[ ! -f "$file" ]]; then
+        fail "AGENT.md exists"
+        return
+    fi
+    pass "AGENT.md exists"
+
+    # Check frontmatter delimiters
+    local first_line
+    first_line=$(head -1 "$file")
+    if [[ "$first_line" != "---" ]]; then
+        fail "frontmatter starts with ---"
+        return
+    fi
+    pass "frontmatter starts with ---"
+
+    local frontmatter
+    frontmatter=$(get_frontmatter "$file")
+
+    # Required fields
+    for field in name description; do
+        if has_field "$frontmatter" "$field"; then
+            pass "has '${field}' field"
+        else
+            fail "has '${field}' field"
+        fi
+    done
+
+    # Name matches directory
+    local fm_name
+    fm_name=$(get_field "$frontmatter" "name" | tr -d '"' | tr -d "'")
+    if [[ "$fm_name" == "$name" ]]; then
+        pass "name field matches directory (${name})"
+    else
+        fail "name field '${fm_name}' does not match directory '${name}'"
+    fi
+
+    # Content length (>10 lines)
+    local lines
+    lines=$(wc -l < "$file")
+    if [[ "$lines" -gt 10 ]]; then
+        pass "has content (${lines} lines)"
+    else
+        fail "too short (${lines} lines, need >10)"
+    fi
+
+    # Check for TODO placeholders
+    if grep -q "^TODO:" "$file"; then
+        warn "contains TODO placeholders"
+    fi
+
+    # Check model field
+    if has_field "$frontmatter" "model"; then
+        local model
+        model=$(get_field "$frontmatter" "model" | tr -d '"' | tr -d "'")
+        if [[ "$model" == "inherit" ]]; then
+            pass "model is 'inherit'"
+        else
+            warn "model is '${model}' (expected 'inherit')"
+        fi
+    else
+        warn "no 'model' field (defaults may vary)"
+    fi
+
+    # If agent lists skills, verify they exist
+    if has_field "$frontmatter" "skills"; then
+        local skills_list
+        skills_list=$(get_field "$frontmatter" "skills" | tr -d '[]"' | tr ',' '\n' | sed 's/^[[:space:]]*//' | sed '/^$/d')
+        if [[ -n "$skills_list" ]]; then
+            while IFS= read -r skill; do
+                [[ -z "$skill" ]] && continue
+                if [[ -d "${REPO_ROOT}/skills/${skill}" ]]; then
+                    pass "referenced skill '${skill}' exists"
+                else
+                    fail "referenced skill '${skill}' not found"
+                fi
+            done <<< "$skills_list"
+        fi
+    fi
+}
+
+# Main
+echo -e "${BLUE}openstack-k8s-agent-tools Skill & Agent Validator${NC}"
+echo "=================================================="
+
+TARGET="${1:-}"
+
+if [[ -n "$TARGET" ]]; then
+    # Validate a specific skill or agent
+    if [[ -d "${REPO_ROOT}/skills/${TARGET}" ]]; then
+        validate_skill "$TARGET"
+    fi
+    if [[ -d "${REPO_ROOT}/agents/${TARGET}" ]]; then
+        validate_agent "$TARGET"
+    fi
+    if [[ ! -d "${REPO_ROOT}/skills/${TARGET}" && ! -d "${REPO_ROOT}/agents/${TARGET}" ]]; then
+        echo -e "${RED}No skill or agent named '${TARGET}' found${NC}"
+        exit 1
     fi
 else
-    skip "explain-flow (no controller directory found)"
+    # Validate all
+    for skill_dir in "${REPO_ROOT}"/skills/*/; do
+        [[ -d "$skill_dir" ]] || continue
+        validate_skill "$(basename "$skill_dir")"
+    done
+
+    for agent_dir in "${REPO_ROOT}"/agents/*/; do
+        [[ -d "$agent_dir" ]] || continue
+        validate_agent "$(basename "$agent_dir")"
+    done
 fi
 
-echo -e "${BLUE}[explain-flow] Parse full repo (CRDs, webhooks, main)${NC}"
-OUTPUT=$(python3 "$SCRIPT_DIR/lib/code-parser.py" "$OPERATOR_DIR" 2>&1)
-CRDS=$(echo "$OUTPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(len(d['crds']))" 2>/dev/null || echo "0")
-WEBHOOKS=$(echo "$OUTPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print(len(d['webhooks']))" 2>/dev/null || echo "0")
-MAIN=$(echo "$OUTPUT" | python3 -c "import sys,json; d=json.load(sys.stdin); print('yes' if d['main'] else 'no')" 2>/dev/null || echo "no")
-
-[ "$CRDS" -gt 0 ] && pass "explain-flow found $CRDS CRDs" || fail "explain-flow found no CRDs"
-[ "$WEBHOOKS" -gt 0 ] && pass "explain-flow found $WEBHOOKS webhook files" || skip "explain-flow no webhooks"
-[ "$MAIN" = "yes" ] && pass "explain-flow found main.go" || fail "explain-flow main.go not found"
+# Summary
 echo
-
-# --- analyze-logs ---
-echo -e "${BLUE}[analyze-logs] Analyze sample logs (stdin)${NC}"
-SAMPLE_LOGS='E0324 10:15:32.123456 1 controller.go:42] Reconciler error: connection refused
-W0324 10:15:33.234567 1 controller.go:55] Requeuing after error
-I0324 10:15:34.345678 1 glance_controller.go:89] Reconciling Glance instance
-E0324 10:15:35.456789 1 glance_controller.go:120] Failed to create ConfigMap: permission denied
-I0324 10:15:37.678901 1 glance_controller.go:140] Successfully reconciled Glance'
-
-OUTPUT=$(echo "$SAMPLE_LOGS" | python3 "$SCRIPT_DIR/lib/log-analyzer.py" - 2>&1)
-if echo "$OUTPUT" | grep -q "Log Analysis Summary"; then
-    pass "analyze-logs stdin processing"
-else
-    fail "analyze-logs stdin processing"
-fi
-
-if echo "$OUTPUT" | grep -q "Errors: [1-9]"; then
-    pass "analyze-logs detected errors"
-else
-    fail "analyze-logs error detection"
-fi
-
-echo -e "${BLUE}[analyze-logs] Analyze from file${NC}"
-LOGFILE="$TMPDIR/test.log"
-echo "$SAMPLE_LOGS" > "$LOGFILE"
-OUTPUT=$(python3 "$SCRIPT_DIR/lib/log-analyzer.py" "$LOGFILE" 2>&1)
-if echo "$OUTPUT" | grep -q "Log Analysis Summary"; then
-    pass "analyze-logs file processing"
-else
-    fail "analyze-logs file processing"
-fi
-
-echo -e "${BLUE}[analyze-logs] JSON output${NC}"
-OUTPUT=$(echo "$SAMPLE_LOGS" | python3 "$SCRIPT_DIR/lib/log-analyzer.py" --json - 2>&1)
-if echo "$OUTPUT" | python3 -c "import sys,json; json.load(sys.stdin)" 2>/dev/null; then
-    pass "analyze-logs JSON output is valid"
-else
-    fail "analyze-logs JSON output"
-fi
-
-echo -e "${BLUE}[analyze-logs] Pattern listing${NC}"
-if python3 "$SCRIPT_DIR/lib/log-analyzer.py" --patterns 2>&1 | grep -q "Error patterns\|error_patterns\|Available patterns"; then
-    pass "analyze-logs --patterns"
-else
-    fail "analyze-logs --patterns"
-fi
-echo
-
-# --- Summary ---
-TOTAL=$((PASS + FAIL + SKIP))
-echo "================================================"
+echo "=================================================="
 echo -e "${BLUE}Validation Summary${NC}"
-echo "================================================"
-echo -e "Total:   $TOTAL"
-echo -e "Passed:  ${GREEN}$PASS${NC}"
-echo -e "Failed:  ${RED}$FAIL${NC}"
-echo -e "Skipped: ${YELLOW}$SKIP${NC}"
+echo "=================================================="
+TOTAL=$((PASS + FAIL + WARN))
+echo -e "Total:    $TOTAL"
+echo -e "Passed:   ${GREEN}${PASS}${NC}"
+echo -e "Failed:   ${RED}${FAIL}${NC}"
+echo -e "Warnings: ${YELLOW}${WARN}${NC}"
 echo
 
-if [ "$FAIL" -eq 0 ]; then
+if [[ "$FAIL" -eq 0 ]]; then
     echo -e "${GREEN}All validations passed!${NC}"
     exit 0
 else
-    echo -e "${RED}$FAIL validation(s) failed${NC}"
+    echo -e "${RED}${FAIL} validation(s) failed${NC}"
     exit 1
 fi

@@ -40,9 +40,8 @@ Guide for extending and evolving the openstack-k8s-agent-tools plugin.
 |  | /explain-flow             |                                         |
 |  +---------------------------+                                         |
 |                                                                        |
-|  LIB (lib/)                          SCRIPTS (scripts/)                |
-|  Shell + Node.js tools               Operator management utilities     |
-|  used by skills at runtime           used by skills at runtime         |
+|  SCRIPTS (scripts/)                                                   |
+|  Utility scripts (install, scaffold)                                  |
 |                                                                        |
 +------------------------------------------------------------------------+
 ```
@@ -170,11 +169,6 @@ openstack-k8s-agent-tools/
 |   +-- feature/AGENT.md       # Planning methodology
 |   +-- task-executor/AGENT.md # Execution principles
 |   +-- code-review/AGENT.md   # Review criteria
-+-- lib/                       # Shared helper scripts and tools
-|   +-- dev-workflow.sh        # Development workflow automation
-|   +-- test-workflow.sh       # Testing workflow automation
-|   +-- code-parser.py         # Operator code flow parser
-|   +-- log-analyzer.py        # Log pattern analysis
 +-- scripts/                   # Utility scripts
 |   +-- install.sh             # Cross-platform installer
 |   +-- scaffold.sh            # Scaffold new skills and agents
