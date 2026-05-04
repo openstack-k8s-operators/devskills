@@ -54,8 +54,10 @@ make install-claude
 | `/test-operator` | — | Testing & QA — quick, standard, full, security, coverage |
 | `/code-style` | — | Go code style enforcement (gopls modernize, conventions) |
 | `/analyze-logs` | — | Log pattern recognition (25+ patterns) |
+| `/analyze-must-gather` | — | Analyze must-gather archives for operator issues |
 | `/explain-flow` | — | Code flow analysis for controllers |
 | `/feature` | `feature` | Feature/bug planning with Jira, cross-repo analysis, structured strategies |
+| `/bug` | `feature` | Bug fix planning — alias for `/feature` with bug-focused context |
 | `/code-review` | `code-review` | Code review against openstack-k8s-operators conventions (PR number, branch diff, or specific files) |
 | `/task-executor` | `task-executor` | Execute plans task-by-task with checkpointing and resume |
 | `/backport-review` | — | Compare downstream backport change requests against upstream Gerrit patches |
@@ -83,7 +85,7 @@ The skill fetches the ticket, analyzes your codebase and cross-references lib-co
 /task-executor   # discovers plans for current operator automatically
 ```
 
-See [docs/feature.md](docs/feature.md) for a full walkthrough.
+See [docs/design/feature.md](docs/design/feature.md) for a full walkthrough.
 
 ### Development loop
 
@@ -114,7 +116,7 @@ See [docs/feature.md](docs/feature.md) for a full walkthrough.
 /code-review controllers/glanceapi_controller.go api/v1beta1/glance_types.go
 ```
 
-When only a number is provided, the skill uses `gh pr diff <number>` to fetch the PR from the current repository. If `gh` is not available, it falls back to WebFetch. See [docs/feature.md](docs/feature.md) for details.
+When only a number is provided, the skill uses `gh pr diff <number>` to fetch the PR from the current repository. If `gh` is not available, it falls back to WebFetch. See [docs/design/feature.md](docs/design/feature.md) for details.
 
 ### Debugging a deployed operator
 
@@ -147,7 +149,7 @@ These are the most common development workflows. Each combines multiple skills t
 |       |             |                |                                 |
 |       v             |         /code-style                              |
 |  ~/.openstack-k8s-  |           gopls modernize                        |
-|   agents-plans/     |                |                                 |
+|   agent-plans/      |                |                                 |
 |       |             |         /code-review                             |
 |       v             |         [code-review agent]                      |
 |  /task-executor     |                                                  |
@@ -173,7 +175,7 @@ These are the most common development workflows. Each combines multiple skills t
 +------------------------------------------------------------------------+
 ```
 
-See [docs/feature.md](docs/feature.md) for detailed flow diagrams.
+See [docs/design/feature.md](docs/design/feature.md) for detailed flow diagrams.
 
 ### Bug Fix
 
@@ -192,19 +194,20 @@ More workflows documented under [docs/](docs/).
 ## Documentation
 
 - **[Getting Started](docs/GETTING-STARTED.md)** — quick reference for all skills
-- **[Feature Planning Guide](docs/feature.md)** — detailed walkthrough with use case
 - **[MCP Setup](docs/mcp-setup.md)** — Atlassian MCP configuration for Jira integration
 - **[Development Guide](docs/DEVELOPMENT.md)** — extending the plugin with new skills
-- **[Memory and State](docs/memory-docs.md)** — shared memory, state tracking, worktrees, dependencies
-- **[CLAUDE.md](CLAUDE.md)** — project conventions and skill reference
+- **[Feature Planning](docs/design/feature.md)** — detailed walkthrough with use case
+- **[Memory and State](docs/design/memory-docs.md)** — shared memory, state tracking, worktrees, dependencies
+- **[AGENTS.md](AGENTS.md)** — project conventions for AI agents
 
 ## Roadmap
 
 - [x] `install.sh` — manual installation script with platform support (Claude Code, OpenCode)
 - [x] Code review accepts PR number, branch, or specific files
 - [x] Shared memory (MEMORY.md), state tracking (state.json), worktree isolation, dependency resolution
-- [x] Improve docs/ with a section about TOKENS
-- [ ] Add must-gather knowledge to enhance the analyze-logs skill
+- [x] `/analyze-must-gather` — must-gather archive analysis
+- [x] `/bug` — bug fix planning alias
+- [x] `make new-skill` / `make new-agent` — scaffold new skills and agents
 - [ ] Guidelines on sandboxing
 - [ ] Jira sub-task export from task breakdowns
 - [ ] Plan diffing (detect Jira ticket changes after plan creation)

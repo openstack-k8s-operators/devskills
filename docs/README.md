@@ -8,18 +8,6 @@ Documentation for openstack-k8s-operators operator development and troubleshooti
 - **[MCP Setup](mcp-setup.md)** - Optional MCP server integrations (Jira)
 - **[Development Guide](DEVELOPMENT.md)** - Extending the plugin
 
-## Installation
-
-```bash
-cd /path/to/openstack-k8s-agent-tools
-./scripts/install.sh --claude-code
-
-# For operator projects
-cd /path/to/your-operator
-cp -r /path/to/openstack-k8s-agent-tools/skills .claude/
-cp /path/to/openstack-k8s-agent-tools/CLAUDE.md .
-```
-
 ## Skills Overview
 
 | Skill | Purpose | Quick Usage |
@@ -28,8 +16,10 @@ cp /path/to/openstack-k8s-agent-tools/CLAUDE.md .
 | **test-operator** | Testing & quality assurance | `/test-operator quick` |
 | **code-style** | Go style enforcement | `/code-style` |
 | **analyze-logs** | Log pattern analysis | `/analyze-logs` |
+| **analyze-must-gather** | Must-gather archive analysis | `/analyze-must-gather` |
 | **explain-flow** | Code flow analysis | `/explain-flow` |
 | **feature** | Feature planning with Jira integration | `/feature OSPRH-2345` |
+| **bug** | Bug fix planning (alias for feature) | `/bug OSPRH-2345` |
 | **task-executor** | Plan execution with checkpointing | `/task-executor` |
 | **code-review** | Code review (dev-docs conventions) | `/code-review` |
 | **backport-review** | Downstream vs upstream patch comparison | `/backport-review` |
@@ -82,7 +72,7 @@ Architecture and design decisions behind the plugin:
 
 **Make targets fail**: Verify in operator directory with Makefile
 
-**Permissions**: `chmod +x skills/**/*.sh scripts/*.sh`
+**Permissions**: `chmod +x scripts/*.sh`
 
 Use the following skills to understand more about the failure:
 
@@ -93,5 +83,5 @@ Use the following skills to understand more about the failure:
 
 ## Additional Resources
 
-- [CLAUDE.md](../CLAUDE.md) - Development guidelines
+- [AGENTS.md](../AGENTS.md) - Project conventions for AI agents
 - [README.md](../README.md) - Project overview
