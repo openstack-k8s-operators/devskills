@@ -91,29 +91,6 @@ else
 fi
 echo
 
-# --- code-style ---
-echo -e "${BLUE}[code-style] Analyze controller file${NC}"
-CONTROLLER=$(find "$OPERATOR_DIR" -name "*_controller.go" -not -path "*/vendor/*" | head -1)
-if [ -n "$CONTROLLER" ]; then
-    OUTPUT=$(python3 "$SCRIPT_DIR/lib/style-analyzer.py" "$CONTROLLER" 2>&1)
-    if echo "$OUTPUT" | grep -q "Style Analysis Report"; then
-        pass "code-style analyzer produces report"
-    else
-        fail "code-style analyzer output"
-    fi
-
-    # Verify no false critical issues on Reconcile signature
-    CRITICAL=$(python3 "$SCRIPT_DIR/lib/style-analyzer.py" --critical "$CONTROLLER" 2>&1)
-    if echo "$CRITICAL" | grep -q "Critical issues: 0"; then
-        pass "code-style no false positives on Reconcile signature"
-    else
-        # Not necessarily a failure — could be real issues
-        echo -e "  ${YELLOW}INFO${NC} code-style found critical issues (may be real): $CRITICAL"
-        pass "code-style critical check ran"
-    fi
-else
-    skip "code-style (no controller file found)"
-fi
 echo
 
 # --- explain-flow ---

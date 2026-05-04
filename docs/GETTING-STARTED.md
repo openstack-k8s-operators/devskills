@@ -40,9 +40,6 @@ make test GINKGO_ARGS="--focus 'pattern'"
 
 ```bash
 /code-style                    # Analyze code
-
-python3 ./lib/style-analyzer.py file.go
-python3 ./lib/style-analyzer.py --modernize file.go
 ```
 
 **Detects**: old syntax, missing error wrapping, controller anti-patterns

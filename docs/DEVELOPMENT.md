@@ -173,15 +173,11 @@ openstack-k8s-agent-tools/
 +-- lib/                       # Shared helper scripts and tools
 |   +-- dev-workflow.sh        # Development workflow automation
 |   +-- test-workflow.sh       # Testing workflow automation
-|   +-- debug-helpers.sh       # Debug utility functions
-|   +-- style-analyzer.py      # Go code style analysis
 |   +-- code-parser.py         # Operator code flow parser
 |   +-- log-analyzer.py        # Log pattern analysis
-|   +-- log-patterns.json      # Log pattern definitions
 +-- scripts/                   # Utility scripts
-|   +-- operator-tools.sh      # Operator management
-|   +-- crd-tools.sh           # CRD analysis
 |   +-- install.sh             # Cross-platform installer
+|   +-- scaffold.sh            # Scaffold new skills and agents
 +-- tests/                     # Validation
 |   +-- test-plugin.sh         # Discovery-based plugin validation
 |   +-- validate-skills.sh     # Operator-level skill validation
