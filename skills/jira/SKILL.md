@@ -215,7 +215,8 @@ Files changed:
 When the plan breakdown has multiple work items and the user wants to track them in Jira:
 
 1. **Do NOT create sub-tasks** — suggest **separate Stories under the same Epic** instead
-2. Present the suggested stories:
+2. **Inherit `AssignedTeam` from the parent Epic** — read `customfield_10606` from the Epic and set it on every created Story. Jira does not propagate this automatically.
+3. Present the suggested stories:
 
 ```
 Your plan has 3 groups of work under Epic OSPRH-1000.
@@ -224,14 +225,17 @@ These would be separate Stories under the Epic:
 1. Story: Add TopologyRef to GlanceAPI types and webhooks
    Epic Link: OSPRH-1000
    fixVersion: 18.0.1
+   AssignedTeam: <value from Epic's customfield_10606>
 
 2. Story: Reconcile topology constraints in GlanceAPI controller
    Epic Link: OSPRH-1000
    fixVersion: 18.0.1
+   AssignedTeam: <value from Epic's customfield_10606>
 
 3. Story: Add EnvTest coverage for topology reconciliation
    Epic Link: OSPRH-1000
    fixVersion: 18.0.1
+   AssignedTeam: <value from Epic's customfield_10606>
 
 Create these Stories in Jira? (I'll provide the fields, you create them)
 ```
