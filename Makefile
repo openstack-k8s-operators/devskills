@@ -1,7 +1,8 @@
 .PHONY: install-claude install-opencode uninstall-claude uninstall-opencode \
-       check test test-memory validate help
+       check test test-memory validate validate-skills new-skill new-agent help
 
 INSTALL := ./scripts/install.sh
+SCAFFOLD := ./scripts/scaffold.sh
 
 ## Installation
 
@@ -32,6 +33,20 @@ test-memory: ## Run memory, state, worktree, and dependency tests
 
 validate: ## Run structure validation only
 	@bash tests/test-plugin.sh structure
+
+validate-skills: ## Validate skill and agent structure
+	@bash tests/validate-skills.sh
+
+## Scaffolding
+
+new-skill: ## Scaffold a new skill (usage: make new-skill my-skill)
+	@$(SCAFFOLD) --skill $(word 2,$(MAKECMDGOALS))
+
+new-agent: ## Scaffold a new agent (usage: make new-agent my-agent)
+	@$(SCAFFOLD) --agent $(word 2,$(MAKECMDGOALS))
+
+%:
+	@:
 
 ## Help
 
