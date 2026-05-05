@@ -21,6 +21,31 @@ To update to the latest version:
 claude plugin update openstack-k8s-agent-tools
 ```
 
+### Cursor
+
+Cursor reads Claude Code plugins from `~/.claude/plugins/cache/` automatically.
+If you have the Claude Code CLI installed, run the same marketplace commands:
+
+```bash
+claude plugin marketplace add https://github.com/fmount/openstack-k8s-agent-tools
+claude plugin install openstack-k8s-agent-tools
+```
+
+Restart Cursor after installing. Skills will appear in Cursor's agent skill
+list and can be invoked from chat.
+
+If you do not have the Claude Code CLI, clone the repo and use the manual
+install target instead:
+
+```bash
+git clone https://github.com/fmount/openstack-k8s-agent-tools.git
+cd openstack-k8s-agent-tools
+make install-claude
+```
+
+This copies skills to `~/.claude/skills/` and agents to `~/.claude/agents/`,
+which Cursor also discovers.
+
 ### OpenCode
 
 ```bash
