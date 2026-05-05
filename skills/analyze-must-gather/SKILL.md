@@ -1,6 +1,6 @@
 ---
 name: analyze-must-gather
-description: Analysis of a must-gather report from OpenStack Services on OpenShift for signs of problems
+description: Produce an analysis of observed problems in a must-gather report from OpenStack Services on OpenShift
 argument-hint: "<path>"
 user-invocable: true
 allowed-tools: ["Bash", "Read", "Grep"]
@@ -41,4 +41,6 @@ context: fork
 
 4. If the previous steps didn't yield any obvious problems, repeat the step "scan the report for signs of problems" but widen the search to words like "warn", "warning". If that yields something, do the step "read more info to help understand the problem".
 
-5. Output a structured analysis of the problems observed in the must-gather report. Start with the most severe issues first. Don't forget to cite relevant file paths in your analysis.
+5. Don't just settle for finding symptoms, try to find the possible root causes of the main problems.
+
+6. Output a structured analysis of the problems observed in the must-gather report. Start with the most severe issues first. Don't forget to cite relevant file paths in your analysis.
