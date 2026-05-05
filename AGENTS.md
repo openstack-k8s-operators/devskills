@@ -20,24 +20,7 @@ Follow these guidelines when working in this codebase.
 | `agents/` | AGENT.md domain knowledge (code-review, feature, task-executor) |
 | `scripts/` | Utility scripts (install, scaffold) |
 | `docs/` | User-facing documentation and design decisions |
-| `examples/` | Example outputs (sample plans) |
 | `tests/` | Plugin validation tests |
-
-## Available Skills
-
-| Skill | Purpose |
-|-------|---------|
-| `/debug-operator` | Systematic debugging: pod status, logs, CRs, events |
-| `/explain-flow` | Code flow analysis: reconciliation logic, state transitions |
-| `/feature` | Feature/bug planning with Jira, cross-repo analysis, strategies |
-| `/task-executor` | Execute plans task-by-task with checkpointing and resume |
-| `/analyze-logs` | Log pattern analysis: errors, performance, reconciliation |
-| `/code-style` | Go style enforcement: gopls modernize, operator conventions |
-| `/test-operator` | Testing and QA: quick/standard/full, lint, security scanning |
-| `/code-review` | Code review against dev-docs conventions and lib-common patterns |
-| `/backport-review` | Compare downstream backports against upstream Gerrit patches |
-| `/jira` | Jira integration: hierarchy validation, outcome posting |
-| `/bug` | Bug fix planning — alias for `/feature` with bug-focused context |
 
 ## Coding Conventions
 
