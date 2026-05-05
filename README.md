@@ -67,133 +67,28 @@ Skills with an agent load an `AGENT.md` file that contains the full domain knowl
 
 ## Quickstart
 
-### Plan and implement a feature from a Jira ticket
+### Create a new skill or agent
 
 ```bash
-cd ~/go/src/github.com/openstack-k8s-operators/glance-operator
+# Scaffold a new skill
+make new-skill my-skill
 
-# Plan from Jira (requires Atlassian MCP)
-/feature OSPRH-4567
+# Scaffold a new agent
+make new-agent my-agent
 
-# Or plan from a local spec file
-/feature docs/my-feature-spec.md
+# Validate structure
+make validate
 ```
 
-The skill fetches the ticket, analyzes your codebase and cross-references lib-common and peer operators, runs an 11-principle planning checklist, proposes implementation strategies, and produces a task breakdown. Then execute it:
+See the [DEVELOPMENT](docs/DEVELOPMENT.md) guide for more details on extending
+the plugin.
 
-```bash
-/task-executor   # discovers plans for current operator automatically
-```
-
-See [docs/design/feature.md](docs/design/feature.md) for a full walkthrough.
-
-### Development loop
-
-```bash
-# Fast feedback while coding
-/test-operator quick
-
-# Run focused tests
-/test-operator focus "Checks the Topology"
-
-# Check code style
-/code-style
-```
-
-### Pre-PR validation
-
-```bash
-# Full test suite + linting + security
-/test-operator full
-
-# Review a PR by number (uses gh cli on the current repository)
-/code-review 438
-
-# Review a branch diff against main
-/code-review my-feature-branch
-
-# Review specific files
-/code-review controllers/glanceapi_controller.go api/v1beta1/glance_types.go
-```
-
-When only a number is provided, the skill uses `gh pr diff <number>` to fetch the PR from the current repository. If `gh` is not available, it falls back to WebFetch. See [docs/design/feature.md](docs/design/feature.md) for details.
-
-### Debugging a deployed operator
-
-```bash
-# Systematic debugging workflow
-/debug-operator nova-operator openstack
-
-# Analyze collected logs
-kubectl logs deployment/nova-operator -n openstack > nova.log
-/analyze-logs nova.log
-```
-
-## Workflows
-
-These are the most common development workflows. Each combines multiple skills to cover the full lifecycle.
-
-### Feature Development
-
-```
-/feature OSPRH-2345 --> /task-executor --> /test-operator full --> /code-review --> PR
-```
-
-```
-+------------------------------------------------------------------------+
-|                                                                        |
-|  PLANNING & EXECUTION          QUALITY & REVIEW                        |
-|                                                                        |
-|  /feature ----------+         /test-operator                           |
-|  [feature agent]    |           quick | standard | full                |
-|       |             |                |                                 |
-|       v             |         /code-style                              |
-|  ~/.openstack-k8s-  |           gopls modernize                        |
-|   agent-plans/      |                |                                 |
-|       |             |         /code-review                             |
-|       v             |         [code-review agent]                      |
-|  /task-executor     |                                                  |
-|  [task-executor] ---+----> uses during execution                       |
-|       |                                                                |
-|  /jira                       DEBUGGING & ANALYSIS                      |
-|    hierarchy rules                                                     |
-|    outcome posting           /debug-operator                           |
-|    [preloaded into              dev workflow | runtime debug            |
-|     feature and                    |                                   |
-|     task-executor]           /analyze-logs                             |
-|                                 25+ error patterns                     |
-|                                                                        |
-|                              /explain-flow                             |
-|                                 reconciler logic                       |
-|                                                                        |
-+------------------------------------------------------------------------+
-|  AGENTS              | EXTERNAL INTEGRATIONS                           |
-|  feature             | [Atlassian MCP] --> /feature, /jira (Jira)      |
-|  task-executor       | [GitHub CLI]    --> /feature (repos)             |
-|  code-review         | [lib-common]    --> plan + execute (reuse)       |
-|                      | [dev-docs]      --> plan + review (conventions)  |
-+------------------------------------------------------------------------+
-```
-
-See [docs/design/feature.md](docs/design/feature.md) for detailed flow diagrams.
-
-### Bug Fix
-
-```
-/analyze-logs --> /debug-operator --> /feature OSPRH-XXX --> /task-executor --> /test-operator full --> PR
-```
-
-### Daily Development
-
-```
-write code --> /test-operator quick --> /test-operator focus "..." --> /code-style --> /code-review --> PR
-```
-
-More workflows documented under [docs/](docs/).
+For usage examples, workflows, and skill reference, see the [GETTING-STARTED]
+(docs/GETTING-STARTED.md) guide.
 
 ## Documentation
 
-- **[Getting Started](docs/GETTING-STARTED.md)** — quick reference for all skills
+- **[Getting Started](docs/GETTING-STARTED.md)** — usage examples, workflows, and skill reference
 - **[MCP Setup](docs/mcp-setup.md)** — Atlassian MCP configuration for Jira integration
 - **[Development Guide](docs/DEVELOPMENT.md)** — extending the plugin with new skills
 - **[Feature Planning](docs/design/feature.md)** — detailed walkthrough with use case

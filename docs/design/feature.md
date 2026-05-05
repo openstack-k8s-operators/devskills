@@ -15,6 +15,44 @@ Plan features and bug fixes for openstack-k8s-operators operators with Jira inte
 /feature
 ```
 
+## Architecture Overview
+
+```
++------------------------------------------------------------------------+
+|                                                                        |
+|  PLANNING & EXECUTION          QUALITY & REVIEW                        |
+|                                                                        |
+|  /feature ----------+         /test-operator                           |
+|  [feature agent]    |           quick | standard | full                |
+|       |             |                |                                 |
+|       v             |         /code-style                              |
+|  ~/.openstack-k8s-  |           gopls modernize                        |
+|   agent-plans/      |                |                                 |
+|       |             |         /code-review                             |
+|       v             |         [code-review agent]                      |
+|  /task-executor     |                                                  |
+|  [task-executor] ---+----> uses during execution                       |
+|       |                                                                |
+|  /jira                       DEBUGGING & ANALYSIS                      |
+|    hierarchy rules                                                     |
+|    outcome posting           /debug-operator                           |
+|    [preloaded into              dev workflow | runtime debug            |
+|     feature and                    |                                   |
+|     task-executor]           /analyze-logs                             |
+|                                 25+ error patterns                     |
+|                                                                        |
+|                              /explain-flow                             |
+|                                 reconciler logic                       |
+|                                                                        |
++------------------------------------------------------------------------+
+|  AGENTS              | EXTERNAL INTEGRATIONS                           |
+|  feature             | [Atlassian MCP] --> /feature, /jira (Jira)      |
+|  task-executor       | [GitHub CLI]    --> /feature (repos)             |
+|  code-review         | [lib-common]    --> plan + execute (reuse)       |
+|                      | [dev-docs]      --> plan + review (conventions)  |
++------------------------------------------------------------------------+
+```
+
 ## How It Works
 
 ```
