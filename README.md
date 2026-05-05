@@ -108,8 +108,7 @@ make validate
 See the [DEVELOPMENT](docs/DEVELOPMENT.md) guide for more details on extending
 the plugin.
 
-For usage examples, workflows, and skill reference, see the [GETTING-STARTED]
-(docs/GETTING-STARTED.md) guide.
+For usage examples, workflows, and skill reference, see the [GETTING-STARTED](docs/GETTING-STARTED.md) guide.
 
 ## Documentation
 
