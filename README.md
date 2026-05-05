@@ -80,6 +80,7 @@ make install-claude
 | `/code-style` | — | Go code style enforcement (gopls modernize, conventions) |
 | `/analyze-logs` | — | Log pattern recognition (25+ patterns) |
 | `/analyze-must-gather` | — | Analyze must-gather archives for operator issues |
+| `/analyze-zuul-ci-logs` | — | Analyze logs downloaded from a Zuul CI job |
 | `/explain-flow` | — | Code flow analysis for controllers |
 | `/feature` | `feature` | Feature/bug planning with Jira, cross-repo analysis, structured strategies |
 | `/bug` | `feature` | Bug fix planning — alias for `/feature` with bug-focused context |
