@@ -21,6 +21,8 @@ context: fork
 
 - You MUST NOT use any command whose purpose is to communicate over network.
 
+- The analysis you produce should include paths to relevant files so that the analysis can be independently verified or continued further from where you left off.
+
 ## Zuul CI logs structure hints
 
 - `job-output.txt` or `job-output.txt.gz` is the outermost log file that should be looked at first. If there is an error that failed the job, it should be somewere towards the end of that log file.
@@ -39,4 +41,4 @@ context: fork
 
 5. Don't just settle for finding symptoms, try to find the root causes of the main problems.
 
-6. Output a structured analysis of the observed problems and ideally also their causes. Start with the most severe issues first. Write the analysis into `./workdir/zuul-logs-analysis.md`.
+6. Output a structured analysis of the observed problems and ideally also their causes. Start with the most severe issues first. Don't forget to cite relevant file paths in your analysis.
