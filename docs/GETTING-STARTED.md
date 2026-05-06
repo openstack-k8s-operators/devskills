@@ -18,7 +18,6 @@ make install-claude
 | `/debug-operator` | `/debug-operator [name] [ns]` | Development workflow + runtime debugging |
 | `/test-operator` | `/test-operator quick\|standard\|full` | Testing & QA |
 | `/code-style` | `/code-style` | Go style enforcement |
-| `/analyze-logs` | `/analyze-logs` | Log pattern analysis |
 | `/analyze-must-gather` | `/analyze-must-gather` | Must-gather archive analysis |
 | `/explain-flow` | `/explain-flow` | Code flow analysis |
 | `/feature` | `/feature OSPRH-2345` | Feature planning with Jira |
@@ -87,11 +86,11 @@ fetch the PR. If `gh` is not available, it falls back to WebFetch.
 
 ```bash
 # Systematic debugging workflow
-/debug-operator nova-operator openstack
+/debug-operator glance-operator openstack-operators
 
 # Analyze collected logs
-kubectl logs deployment/nova-operator -n openstack > nova.log
-/analyze-logs nova.log
+oc logs deployment/glance-operator -n openstack-operators > glance.log
+# Then ask /debug-operator to analyze it
 ```
 
 ## Common Workflows
@@ -105,7 +104,7 @@ kubectl logs deployment/nova-operator -n openstack > nova.log
 **Bug fix**:
 
 ```
-/analyze-logs --> /debug-operator --> /bug OSPRH-XXX --> /task-executor --> /test-operator full --> PR
+/debug-operator --> /bug OSPRH-XXX --> /task-executor --> /test-operator full --> PR
 ```
 
 **Daily development**:

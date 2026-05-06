@@ -36,7 +36,7 @@ Guide for extending and evolving the openstack-k8s-agent-tools plugin.
 |  | /debug-operator           |  Self-contained skills                  |
 |  | /test-operator            |  (no agent, all logic in SKILL.md)      |
 |  | /code-style               |                                         |
-|  | /analyze-logs             |                                         |
+|                              |                                         |
 |  | /explain-flow             |                                         |
 |  +---------------------------+                                         |
 |                                                                        |
@@ -163,7 +163,7 @@ openstack-k8s-agent-tools/
 |   +-- debug-operator/SKILL.md# /debug-operator - self-contained
 |   +-- test-operator/SKILL.md # /test-operator - self-contained
 |   +-- code-style/SKILL.md    # /code-style - self-contained
-|   +-- analyze-logs/SKILL.md  # /analyze-logs - self-contained
+|   +-- analyze-must-gather/SKILL.md # /analyze-must-gather - self-contained
 |   +-- explain-flow/SKILL.md  # /explain-flow - self-contained
 +-- agents/                    # Agent worker definitions
 |   +-- feature/AGENT.md       # Planning methodology

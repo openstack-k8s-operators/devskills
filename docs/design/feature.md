@@ -38,8 +38,8 @@ Plan features and bug fixes for openstack-k8s-operators operators with Jira inte
 |    outcome posting           /debug-operator                           |
 |    [preloaded into              dev workflow | runtime debug            |
 |     feature and                    |                                   |
-|     task-executor]           /analyze-logs                             |
-|                                 25+ error patterns                     |
+|     task-executor]                                                    |
+|                                                                        |
 |                                                                        |
 |                              /explain-flow                             |
 |                                 reconciler logic                       |

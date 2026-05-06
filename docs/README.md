@@ -15,7 +15,6 @@ Documentation for openstack-k8s-operators operator development and troubleshooti
 | **debug-operator** | Development workflow + testing | `/debug-operator` |
 | **test-operator** | Testing & quality assurance | `/test-operator quick` |
 | **code-style** | Go style enforcement | `/code-style` |
-| **analyze-logs** | Log pattern analysis | `/analyze-logs` |
 | **analyze-must-gather** | Must-gather archive analysis | `/analyze-must-gather` |
 | **explain-flow** | Code flow analysis | `/explain-flow` |
 | **feature** | Feature planning with Jira integration | `/feature OSPRH-2345` |
@@ -77,7 +76,7 @@ Architecture and design decisions behind the plugin:
 Use the following skills to understand more about the failure:
 
 ```bash
-/analyze-logs
+/debug-operator
 /explain-flow
 ```
 

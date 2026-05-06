@@ -24,27 +24,23 @@ When debugging or developing an operator, I will:
 
 ## Development Commands
 
-The skill includes automated workflows (`dev-workflow.sh`) for:
-
 ### Complete Workflow
 
-- `run_full_workflow` - End-to-end development validation
-- `run_precommit_checks` - Syntax and style validation
-- `generate_manifests` - Run `make manifests && make generate`
-- `check_build` - Verify operator compilation
+- Pre-commit checks, syntax and style validation
+- Run `make manifests && make generate`
+- Verify operator compilation (`make build`)
 
 ### Testing
 
-- `run_operator_tests` - Execute `make test`
-- `focus_test '<pattern>'` - Run specific tests with Ginkgo focus
-- `check_test_coverage` - Generate test coverage reports
-- `show_tests` - List available test patterns
+- Execute `make test`
+- Run specific tests with Ginkgo focus
+- Generate test coverage reports
 
 ### Quality Assurance
 
-- `run_linting` - Code style and quality checks
-- `check_go_modules` - Validate dependencies with `go mod`
-- `validate_crds` - Validate Custom Resource Definitions
+- Code style and quality checks (`make golangci`)
+- Validate dependencies with `go mod tidy`
+- Validate Custom Resource Definitions
 
 ## Runtime Debugging
 
@@ -62,7 +58,7 @@ When debugging deployed operators:
 
 ```bash
 # Debug specific operator
-/debug-operator nova-operator openstack
+/debug-operator glance-operator openstack-operators
 
 # General cluster debugging
 /debug-operator cluster-check
@@ -79,33 +75,6 @@ I will automatically:
 - Check custom resource status and conditions
 - Review recent events for warnings and errors
 - Verify RBAC configuration
-
-## Helper Scripts
-
-The skill includes helper functions for:
-
-```bash
-# Environment verification
-check_kubeconfig
-
-# Operator discovery
-get_operator_pods
-
-# Deployment analysis
-check_operator_deployment <name> [namespace]
-
-# Log pattern analysis
-analyze_operator_logs <pod> <namespace> [lines]
-
-# Custom resource inspection
-check_custom_resources [pattern]
-
-# RBAC verification
-check_operator_rbac <name> [namespace]
-
-# Event analysis
-get_operator_events [namespace] [hours]
-```
 
 ## Usage Examples
 
@@ -141,6 +110,47 @@ The skill integrates with:
 - **lib-common** patterns and conventions
 - **Ginkgo** testing framework workflows
 - **Controller-runtime** debugging patterns
+
+## Log Analysis
+
+This skill includes advanced log pattern matching. When given a log file or oc output, analyze it for:
+
+### Error Patterns
+
+- **API Connectivity**: Connection refused, dial failures
+- **RBAC Issues**: Permission denied, forbidden access
+- **Resource Problems**: Not found, validation failures
+- **Runtime Errors**: Panics, nil pointer exceptions
+- **Image Issues**: Pull failures, registry access
+- **Webhook Failures**: Admission controller errors
+
+### Performance Patterns
+
+- **Slow Reconciliation**: >30s reconciliation times
+- **Queue Issues**: Large queue depths (>100 items)
+- **API Latency**: Slow Kubernetes API responses
+- **Resource Conflicts**: Optimistic locking failures
+
+### OpenStack-Specific Patterns
+
+- **Service Failures**: Glance, Nova, Cinder, Manila
+- **Keystone Auth**: Authentication/authorization issues
+- **Database**: Connection and SQL errors
+- **Network**: Neutron service problems
+
+### Log Analysis Usage
+
+```bash
+# Analyze collected logs
+/debug-operator
+oc logs deployment/glance-operator -n openstack-operators > nova.log
+# Then ask to analyze the log file
+
+# Multi-pod logs
+oc logs -l app=operator --all-containers=true > combined.log
+```
+
+Output includes: error/warning counts, severity classification, timeline view, and remediation suggestions.
 
 ## Common Issues Detected
 
