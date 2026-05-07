@@ -53,7 +53,7 @@ help: ## Show this help
 	@echo "openstack-k8s-agent-tools"
 	@echo ""
 	@echo "Marketplace install (Claude Code, recommended):"
-	@echo "  claude plugin marketplace add https://github.com/fmount/openstack-k8s-agent-tools"
+	@echo "  claude plugin marketplace add https://github.com/openstack-k8s-operators/devskills"
 	@echo "  claude plugin install openstack-k8s-agent-tools"
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | \

@@ -11,7 +11,7 @@ Claude Code plugin for [openstack-k8s-operators](https://github.com/openstack-k8
 Add the marketplace and install the plugin (two steps):
 
 ```bash
-claude plugin marketplace add https://github.com/fmount/openstack-k8s-agent-tools
+claude plugin marketplace add https://github.com/openstack-k8s-operators/devskills
 claude plugin install openstack-k8s-agent-tools
 ```
 
@@ -27,7 +27,7 @@ Cursor reads Claude Code plugins from `~/.claude/plugins/cache/` automatically.
 If you have the Claude Code CLI installed, run the same marketplace commands:
 
 ```bash
-claude plugin marketplace add https://github.com/fmount/openstack-k8s-agent-tools
+claude plugin marketplace add https://github.com/openstack-k8s-operators/devskills
 claude plugin install openstack-k8s-agent-tools
 ```
 
@@ -38,7 +38,7 @@ If you do not have the Claude Code CLI, clone the repo and use the manual
 install target instead:
 
 ```bash
-git clone https://github.com/fmount/openstack-k8s-agent-tools.git
+git clone https://github.com/openstack-k8s-operators/devskills.git
 cd openstack-k8s-agent-tools
 make install-claude
 ```
@@ -49,7 +49,7 @@ which Cursor also discovers.
 ### OpenCode
 
 ```bash
-git clone https://github.com/fmount/openstack-k8s-agent-tools.git
+git clone https://github.com/openstack-k8s-operators/devskills.git
 cd openstack-k8s-agent-tools
 make install-opencode
 ```

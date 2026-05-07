@@ -4,7 +4,7 @@
 
 ```bash
 # Claude Code (recommended)
-claude plugin marketplace add https://github.com/fmount/openstack-k8s-agent-tools
+claude plugin marketplace add https://github.com/openstack-k8s-operators/devskills
 claude plugin install openstack-k8s-agent-tools
 
 # Manual install

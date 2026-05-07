@@ -283,7 +283,7 @@ You are a specialist in <domain>.
 When the plugin is installed via marketplace:
 
 ```
-claude plugin marketplace add https://github.com/fmount/openstack-k8s-agent-tools
+claude plugin marketplace add https://github.com/openstack-k8s-operators/devskills
 claude plugin install openstack-k8s-agent-tools
 ```
 
