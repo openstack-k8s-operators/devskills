@@ -27,10 +27,10 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/fmount/openstack-k8s-agent-tools.git"
+    "url": "https://github.com/openstack-k8s-operators/devskills.git"
   },
   "bugs": {
-    "url": "https://github.com/fmount/openstack-k8s-agent-tools/issues"
+    "url": "https://github.com/openstack-k8s-operators/devskills/issues"
   },
   "engines": {
     "node": ">=14.0.0"

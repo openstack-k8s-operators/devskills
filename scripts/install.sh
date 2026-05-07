@@ -282,7 +282,7 @@ Options:
   --help               Show this help message
 
 Marketplace install (Claude Code only, recommended):
-  claude plugin marketplace add https://github.com/fmount/openstack-k8s-agent-tools
+  claude plugin marketplace add https://github.com/openstack-k8s-operators/devskills
   claude plugin install openstack-k8s-agent-tools
 
 Examples:
