@@ -3,7 +3,7 @@ name: analyze-must-gather
 description: Produce an analysis of observed problems in a must-gather report from OpenStack Services on OpenShift
 argument-hint: "<path>"
 user-invocable: true
-allowed-tools: ["Bash", "Read", "Grep"]
+allowed-tools: ["Bash", "Read", "Grep", "Agent"]
 context: fork
 ---
 
@@ -44,3 +44,53 @@ context: fork
 5. Don't just settle for finding symptoms, try to find the possible root causes of the main problems.
 
 6. Output a structured analysis of the problems observed in the must-gather report. Start with the most severe issues first. Don't forget to cite relevant file paths in your analysis.
+
+## RHOSO-Specialized Triage (optional)
+
+After producing the generic analysis, check whether the must-gather contains RHOSO (Red Hat OpenStack Services on OpenShift) resources:
+
+```bash
+# Check for RHOSO namespace directories
+find <must-gather-root> -maxdepth 2 -type d \( -name "openstack" -o -name "openstack-operators" \)
+
+# Check for RHOSO CRDs
+find <must-gather-root> -path "*/cluster-scoped-resources/openstack.org" -type d
+
+# Check for OpenStackControlPlane resources
+find <must-gather-root> -path "*openstackcontrolplane*" -type f | head -5
+```
+
+If RHOSO resources are detected:
+
+1. **Inform the user**: "This must-gather contains RHOSO (Red Hat OpenStack Services on OpenShift) resources. A specialized RHOSO triage is available that uses `omc` to perform deeper diagnostics including operator installation validation, networking alignment checks, storage class analysis, and control/data plane status."
+
+2. **Ask**: "Would you like to run RHOSO-specialized triage? (Requires `omc` to be installed.)"
+
+3. **If the user confirms**, check for `omc`:
+   - Run `which omc`. If not found, provide install instructions and continue with just the generic analysis.
+   - If found, locate the must-gather root (find the directory containing `cluster-scoped-resources/`), run `omc use <path>`, and detect the OpenStack namespaces (`openstack`, `openstack-operators`).
+
+4. **Dispatch the support-triage agent** with the generic findings as context:
+
+   ```
+   Agent(
+     subagent_type="openstack-k8s-agent-tools:support-triage:support-triage",
+     description="RHOSO-specialized triage after generic analysis",
+     prompt="Must-gather path: <path>
+   Namespaces: openstack=<ns>, openstack-operators=<ns-ops>
+   Selected categories: all
+
+   ## Prior Generic Analysis Findings
+   <insert the structured analysis you just produced>
+
+   RHOSO-specific resources detected. The generic analysis above identified surface-level
+   issues. Focus on RHOSO-specific diagnostics: correlate generic findings with RHOSO root
+   causes, check configurations the generic scan cannot evaluate (OperatorGroup
+   targetNamespace, NAD/NNCP alignment, StorageClass alignment, webhook namespace selectors),
+   and avoid duplicating already-reported issues unless adding RHOSO-specific context."
+   )
+   ```
+
+5. **Present the combined output**: the generic analysis followed by the RHOSO-specialized triage report.
+
+If RHOSO resources are NOT detected, skip this section entirely and present only the generic analysis.

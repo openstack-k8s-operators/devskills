@@ -78,7 +78,8 @@ make install-claude
 | `/debug-operator` | — | Development workflow + runtime debugging + log analysis |
 | `/test-operator` | — | Testing & QA — quick, standard, full, security, coverage |
 | `/code-style` | — | Go code style enforcement (gopls modernize, conventions) |
-| `/analyze-must-gather` | — | Analyze must-gather archives for operator issues |
+| `/analyze-must-gather` | `support-triage` (optional) | Analyze must-gather archives; dispatches RHOSO triage when OpenStack resources detected |
+| `/support-triage` | `support-triage` | RHOSO must-gather triage using omc and Support Enablement diagnostics |
 | `/analyze-zuul-ci-logs` | — | Analyze logs downloaded from a Zuul CI job |
 | `/explain-flow` | — | Code flow analysis for controllers |
 | `/feature` | `feature` | Feature/bug planning with Jira, cross-repo analysis, structured strategies |
