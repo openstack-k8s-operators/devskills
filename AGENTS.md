@@ -17,7 +17,7 @@ Follow these guidelines when working in this codebase.
 | Directory | Contents |
 |-----------|----------|
 | `skills/` | SKILL.md entry points (one per skill) |
-| `agents/` | AGENT.md domain knowledge (code-review, feature, task-executor, horizon-pqc) |
+| `agents/` | AGENT.md domain knowledge (code-review, feature, task-executor, pqc) |
 | `scripts/` | Utility scripts (install, scaffold) |
 | `docs/` | User-facing documentation and design decisions |
 | `tests/` | Plugin validation tests |
