@@ -32,6 +32,19 @@ Guide for extending and evolving the openstack-k8s-agent-tools plugin.
 |  | - dispatches agent        |       | - structured verdict      |     |
 |  +---------------------------+       +---------------------------+     |
 |                                                                        |
+|  +---------------------------+       +---------------------------+     |
+|  | /support-triage           |       | support-triage             |     |
+|  | - checks omc, locates MG  |  -->  | - 6 diagnostic categories |     |
+|  | - namespace detection     | dispatch| - omc command library    |     |
+|  | - area selection          |       | - severity taxonomy        |     |
+|  +---------------------------+       | - structured triage report |     |
+|                                      +---------------------------+     |
+|                                                                        |
+|  +---------------------------+                                         |
+|  | /analyze-must-gather      |  Dispatches support-triage agent        |
+|  |  (+ self-contained scan)  |  when RHOSO resources detected          |
+|  +---------------------------+                                         |
+|                                                                        |
 |  +---------------------------+                                         |
 |  | /debug-operator           |  Self-contained skills                  |
 |  | /test-operator            |  (no agent, all logic in SKILL.md)      |
@@ -163,12 +176,14 @@ openstack-k8s-agent-tools/
 |   +-- debug-operator/SKILL.md# /debug-operator - self-contained
 |   +-- test-operator/SKILL.md # /test-operator - self-contained
 |   +-- code-style/SKILL.md    # /code-style - self-contained
-|   +-- analyze-must-gather/SKILL.md # /analyze-must-gather - self-contained
+|   +-- analyze-must-gather/SKILL.md # /analyze-must-gather - dispatches support-triage when RHOSO detected
+|   +-- support-triage/SKILL.md # /support-triage - dispatches support-triage agent
 |   +-- explain-flow/SKILL.md  # /explain-flow - self-contained
 +-- agents/                    # Agent worker definitions
 |   +-- feature/AGENT.md       # Planning methodology
 |   +-- task-executor/AGENT.md # Execution principles
 |   +-- code-review/AGENT.md   # Review criteria
+|   +-- support-triage/AGENT.md # RHOSO triage methodology
 +-- scripts/                   # Utility scripts
 |   +-- install.sh             # Cross-platform installer
 |   +-- scaffold.sh            # Scaffold new skills and agents
