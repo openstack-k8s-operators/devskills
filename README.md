@@ -91,6 +91,39 @@ make install-claude
 
 Skills with an agent load an `AGENT.md` file that contains the full domain knowledge and methodology. Skills without an agent are self-contained in their `SKILL.md`.
 
+## Skill Architecture
+
+This plugin uses two patterns for skills. Choosing the right one up front
+avoids rework later.
+
+**Self-contained** -- all logic lives in `SKILL.md`. Good for straightforward
+workflows that don't need deep domain knowledge (e.g.,
+`skills/code-style/SKILL.md`).
+
+**Agent-backed** -- `SKILL.md` handles input routing and orchestration, then
+dispatches an `AGENT.md` that holds the domain methodology. Use this when the
+skill needs complex evaluation criteria, multi-step analysis, or reusable
+expertise that benefits from isolated context (e.g.,
+`skills/code-review/SKILL.md` + `agents/code-review/AGENT.md`). Note that the
+parent conversation only receives the agent's summary, so detailed
+intermediate findings stay in the sub-agent's context. If follow-up
+discussion on the full analysis is expected, consider keeping the logic
+self-contained. The dispatch looks like:
+
+```
+Agent(subagent_type="openstack-k8s-agent-tools:<name>:<name>", ...)
+```
+
+> **OpenCode users:** write skills using the Claude Code dispatch syntax above.
+> `make install-opencode` automatically converts it to the `@name` mention
+> form that OpenCode expects.
+
+When scaffolding an agent-backed skill, run both `make new-skill` and
+`make new-agent`, and add `"Agent"` to the skill's `allowed-tools` list.
+
+See the [Development Guide](docs/DEVELOPMENT.md) for the full architecture
+walkthrough, flow diagrams, and AGENT.md frontmatter reference.
+
 ## Quickstart
 
 ### Create a new skill or agent

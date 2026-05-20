@@ -24,7 +24,29 @@ Skills are the primary extensibility mechanism. See [docs/DEVELOPMENT.md](docs/D
 - Update `CLAUDE.md` with the new skill documentation
 - Update `README.md` skills table
 
-### Patterns to follow
+### Choosing a pattern
+
+Most skills fall into one of two patterns. If the skill performs a
+straightforward workflow (run commands, parse output, report), keep it
+self-contained. If it needs deep domain knowledge, complex evaluation criteria,
+or a reusable methodology, split it into a skill (orchestrator) and an agent
+(worker) -- the agent runs in its own context and holds all the domain logic.
+
+When using the agent-backed pattern, scaffold both pieces and wire them
+together:
+
+```bash
+make new-skill my-skill
+make new-agent my-skill
+```
+
+Then add `"Agent"` to the skill's `allowed-tools` and add the dispatch call:
+
+```
+Agent(subagent_type="openstack-k8s-agent-tools:my-skill:my-skill", ...)
+```
+
+### Pattern examples
 
 - **Self-contained skill**: see `skills/debug-operator/SKILL.md`
 - **Skill + agent**: see `skills/code-review/SKILL.md` + `agents/code-review/AGENT.md`
