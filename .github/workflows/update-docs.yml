@@ -1,0 +1,52 @@
+name: Update Documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'skills/**'
+      - 'agents/**'
+      - '.claude-plugin/**'
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Regenerate documentation
+        run: |
+          uv pip install --system skillsaw==0.11.5
+          skillsaw docs -o docs/
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "docs: auto-regenerate plugin documentation"
+          title: "docs: auto-regenerate plugin documentation"
+          body: |
+            This PR was automatically generated to update plugin documentation.
+
+            Changes include:
+            - Regenerated docs/index.html via `skillsaw docs`
+          branch: auto-update-docs
+          delete-branch: true
+          add-paths: |
+            docs/

@@ -94,7 +94,7 @@ replace github.com/openstack-k8s-operators/lib-common/modules/common => github.c
 These indicate the PR depends on unreleased changes in another repository. For each replace directive:
 
 1. Identify the source repo and branch
-2. Try to find the corresponding open PR:
+2. Find the corresponding open PR:
    - Search via `gh pr list --repo <repo> --head <branch>` if `gh` is available
    - Or WebFetch `https://github.com/<owner>/<repo>/pulls?q=head:<branch>`
 3. Fetch that PR's diff to understand what new code is being provided
