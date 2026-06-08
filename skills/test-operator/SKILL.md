@@ -1,7 +1,7 @@
 ---
 name: test-operator
 description: Comprehensive testing, linting, and quality assurance for openstack-k8s-operators operators with Go best practices
-argument-hint: "<quick | standard | full | focus "pattern" | security | coverage>"
+argument-hint: '<quick | standard | full | focus "pattern" | security | coverage>'
 user-invocable: true
 allowed-tools: ["Bash", "Read", "Grep", "Glob", "TaskCreate", "TaskUpdate"]
 context: fork

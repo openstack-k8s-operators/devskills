@@ -1,0 +1,92 @@
+# skillsaw configuration
+# https://github.com/stbenjam/skillsaw
+
+version: "0.11.5"
+strict: false
+
+rules:
+  # Plugins should not enable non-allowlisted MCP servers
+  mcp-prohibited:
+    enabled: true
+    severity: error
+    allowlist:
+      - gopls
+      - atlassian
+
+  # Instruction files (AGENTS.md, CLAUDE.md, GEMINI.md)
+  instruction-file-valid:
+    enabled: true
+
+  instruction-imports-valid:
+    enabled: true
+
+  # SKILL.md frontmatter validation
+  agentskill-valid:
+    enabled: true
+
+  agentskill-description:
+    enabled: true
+
+  agentskill-name:
+    enabled: true
+
+  agentskill-rename-refs:
+    enabled: true
+
+  # Content quality rules
+  content-weak-language:
+    enabled: true
+
+  content-tautological:
+    enabled: true
+
+  content-cognitive-chunks:
+    enabled: true
+    severity: warning
+
+  content-embedded-secrets:
+    enabled: true
+    severity: error
+
+  content-broken-internal-reference:
+    enabled: true
+    severity: error
+
+  content-negative-only:
+    enabled: false
+
+  content-unlinked-internal-reference:
+    enabled: false
+
+  content-placeholder-text:
+    enabled: false
+
+  # Disabled initially — revisit once skills are right-sized
+  context-budget:
+    enabled: false
+
+  # Uncertain value for this repo
+  content-critical-position:
+    enabled: false
+
+  # Plugin structure
+  plugin-json-valid:
+    enabled: true
+
+  # No promptfoo evals in this repo
+  promptfoo-valid:
+    enabled: false
+
+  promptfoo-assertions:
+    enabled: false
+
+  promptfoo-metadata:
+    enabled: false
+
+# Exclude patterns (glob format)
+exclude:
+  # Workaround: skillsaw HTML parser crashes on regex lookbehind
+  # (?<![a-zA-Z]) in a code block. Remove once upstream is fixed.
+  - "skills/backport-review/**"
+
+content-paths: []

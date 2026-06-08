@@ -350,13 +350,31 @@ pre-commit run --all-files
 
 Hooks: trailing-whitespace, end-of-file-fixer, check-yaml, check-json, shellcheck, markdownlint.
 
+### Linting with skillsaw
+
+[skillsaw](https://github.com/stbenjam/skillsaw) lints SKILL.md, AGENT.md, and
+instruction files for weak language, structural issues, and content quality.
+
+```bash
+# Lint all files
+uvx skillsaw
+
+# Visualize repo structure and token counts
+uvx skillsaw tree
+
+# Regenerate HTML documentation
+uvx skillsaw docs -o docs/
+```
+
+Configuration is in `.skillsaw.yaml` at the repo root.
+
 ### CI
 
-GitHub Actions workflow at `.github/workflows/validate.yml` runs on push/PR:
+GitHub Actions workflows run on push/PR:
 
-- Plugin structure validation
-- Plugin functionality tests
-- Shell script syntax checking
+- `.github/workflows/validate.yml` — plugin structure, functionality, shell syntax
+- `.github/workflows/lint-plugins.yml` — skillsaw linting of skills, agents, and instruction files
+- `.github/workflows/update-docs.yml` — regenerates `docs/index.html` when skills or agents change on main
 
 ## Versioning
 

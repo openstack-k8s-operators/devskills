@@ -1,0 +1,21 @@
+name: Lint Plugins
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run skillsaw
+        uses: stbenjam/skillsaw@v0
+        with:
+          strict: false
+          version: '0.11.5'
