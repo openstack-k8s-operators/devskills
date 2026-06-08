@@ -88,6 +88,7 @@ make install-claude
 | `/task-executor` | `task-executor` | Execute plans task-by-task with checkpointing and resume |
 | `/backport-review` | — | Compare downstream backport change requests against upstream Gerrit patches |
 | `/jira` | — | Jira integration — ticket inspection, hierarchy validation, outcome posting |
+| `/pqc` | `pqc` | PQC compliance workflow for openstack-k8s-operators (TLS 1.3, kRSA blocking) |
 
 Skills with an agent load an `AGENT.md` file that contains the full domain knowledge and methodology. Skills without an agent are self-contained in their `SKILL.md`.
 
