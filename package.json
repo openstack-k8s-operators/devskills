@@ -23,8 +23,9 @@
   ],
   "author": "openstack-k8s-operators Development Team",
   "license": "MIT",
-  "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.3.161"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/openstack-k8s-operators/devskills.git"

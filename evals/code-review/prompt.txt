@@ -1,0 +1,1 @@
+Review the Go file evals/code-review/fixtures/{{target_file}} for openstack-k8s-operators conventions.

@@ -1,1 +1,5 @@
 .claude
+node_modules/
+.promptfoo/
+package-lock.json
+__pycache__/
