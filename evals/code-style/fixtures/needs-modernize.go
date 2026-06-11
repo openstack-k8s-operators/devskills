@@ -1,56 +1,66 @@
 package controllers
 
 import (
-	"strings"
+	"fmt"
 )
 
-// Old-style variable declarations — modernized to zero-value / short form
-var names []string
-var endpoints []string
-var labelMap = make(map[string]string)
+// BAD: old-style variable declarations — should use short form
+var names []string = []string{}
+var endpoints []string = []string{}
+var labelMap map[string]string = map[string]string{}
 
-// Owner returns the owner annotation value.
-func Owner(annotations map[string]string) string {
+// BAD: Get prefix — should be just Owner
+func GetOwner(annotations map[string]string) string {
 	return annotations["owner"]
 }
 
-// AppName returns the application name.
-func AppName() string {
+// BAD: Get prefix — should be just AppName
+func GetAppName() string {
 	return "glance"
 }
 
-// BuildLabels builds a label map for the given names and namespace.
 func BuildLabels(names []string, namespace string) map[string]string {
-	labels := make(map[string]string)
+	// BAD: old-style map declaration
+	var labels map[string]string = map[string]string{}
 	labels["app"] = "glance"
 	labels["namespace"] = namespace
 
-	for _, name := range names {
-		if name != "" {
-			labels[name] = "true"
+	// BAD: C-style loop instead of range
+	for i := 0; i < len(names); i++ {
+		if names[i] != "" {
+			labels[names[i]] = "true"
 		}
 	}
 
 	return labels
 }
 
-// FormatEndpoints joins endpoints with a comma separator.
+// BAD: string concatenation in loop instead of strings.Join
 func FormatEndpoints(endpoints []string) string {
-	return strings.Join(endpoints, ",")
+	var result string = ""
+	for i := 0; i < len(endpoints); i++ {
+		if i > 0 {
+			result = result + ","
+		}
+		result = result + endpoints[i]
+	}
+	return result
 }
 
-// AllNames returns all non-empty names from the input slice.
+// BAD: C-style loop instead of range
 func AllNames(names []string) []string {
-	var out []string
-	for _, name := range names {
-		if name != "" {
-			out = append(out, name)
+	var out []string = []string{}
+	for i := 0; i < len(names); i++ {
+		if names[i] != "" {
+			out = append(out, names[i])
 		}
 	}
 	return out
 }
 
-// BuildConfig builds a single-entry config map from the given key and value.
+// BAD: unnecessary Sprintf for simple key-value
 func BuildConfig(key, value string) map[string]string {
-	return map[string]string{key: value}
+	var config map[string]string = map[string]string{}
+	config[fmt.Sprintf("%s", key)] = fmt.Sprintf("%s", value)
+	return config
 }

@@ -13,15 +13,25 @@ NC='\033[0m'
 
 errors=0
 warnings=0
+checks=0
 
-pass() { echo -e "  ${GREEN}PASS${NC} $1"; }
-fail() { echo -e "  ${RED}FAIL${NC} $1"; errors=$((errors + 1)); }
-warn() { echo -e "  ${YELLOW}WARN${NC} $1"; warnings=$((warnings + 1)); }
+pass() { echo -e "  ${GREEN}PASS${NC} $1"; checks=$((checks + 1)); }
+fail() { echo -e "  ${RED}FAIL${NC} $1"; errors=$((errors + 1)); checks=$((checks + 1)); }
+warn() { echo -e "  ${YELLOW}WARN${NC} $1"; warnings=$((warnings + 1)); checks=$((checks + 1)); }
 
 if [[ ! -d "$EVALS_DIR" ]]; then
     echo -e "${RED}No evals/ directory found${NC}"
     exit 1
 fi
+
+# check_yaml_field checks that a top-level YAML key exists in the given file.
+# Matches "key:" at the start of a line (no leading whitespace), which is
+# sufficient for the flat structure of eval.yaml without requiring PyYAML.
+check_yaml_field() {
+    local file="$1"
+    local field="$2"
+    grep -qE "^${field}:" "$file"
+}
 
 eval_count=0
 
@@ -31,7 +41,8 @@ for eval_dir in "$EVALS_DIR"/*/; do
     echo "Checking evals/$skill/"
     eval_count=$((eval_count + 1))
 
-    # Required files
+    # --- Required files ---
+
     if [[ -f "$eval_dir/eval.yaml" ]]; then
         pass "eval.yaml exists"
     else
@@ -51,26 +62,23 @@ for eval_dir in "$EVALS_DIR"/*/; do
         warn "README.md missing"
     fi
 
-    # eval.yaml is valid YAML with required fields
-    if command -v python3 &>/dev/null; then
-        if python3 -c "
-import yaml, sys
-with open('$eval_dir/eval.yaml') as f:
-    data = yaml.safe_load(f)
-missing = [k for k in ['description', 'providers', 'tests'] if k not in data]
-if missing:
-    print(','.join(missing))
-    sys.exit(1)
-" 2>/dev/null; then
-            pass "eval.yaml has required fields (description, providers, tests)"
-        else
-            fail "eval.yaml missing required fields"
+    # --- eval.yaml required fields ---
+
+    missing_fields=()
+    for field in description providers tests; do
+        if ! check_yaml_field "$eval_dir/eval.yaml" "$field"; then
+            missing_fields+=("$field")
         fi
+    done
+
+    if [[ ${#missing_fields[@]} -eq 0 ]]; then
+        pass "eval.yaml has required fields (description, providers, tests)"
     else
-        warn "python3 not found — skipping YAML validation"
+        fail "eval.yaml missing required fields: ${missing_fields[*]}"
     fi
 
-    # graders/ directory
+    # --- graders/ directory ---
+
     if [[ -d "$eval_dir/graders" ]]; then
         grader_count=0
         for grader in "$eval_dir"/graders/*.py; do
@@ -90,7 +98,8 @@ if missing:
         warn "graders/ directory missing"
     fi
 
-    # fixtures/ directory
+    # --- fixtures/ directory ---
+
     if [[ -d "$eval_dir/fixtures" ]]; then
         fixture_count=$(find "$eval_dir/fixtures" -type f | wc -l)
         if [[ $fixture_count -gt 0 ]]; then
@@ -102,7 +111,8 @@ if missing:
         warn "fixtures/ directory missing"
     fi
 
-    # Corresponding skill exists
+    # --- Corresponding skill exists ---
+
     if [[ -f "$REPO_ROOT/skills/$skill/SKILL.md" ]]; then
         pass "skills/$skill/SKILL.md exists"
     else
@@ -117,8 +127,9 @@ if [[ $eval_count -eq 0 ]]; then
     exit 0
 fi
 
+passed=$((checks - errors - warnings))
 echo "---"
-echo -e "Checked $eval_count eval(s): ${GREEN}$((eval_count * 6 - errors - warnings)) passed${NC}, ${RED}$errors error(s)${NC}, ${YELLOW}$warnings warning(s)${NC}"
+echo -e "Checked $eval_count eval(s): ${GREEN}${passed} passed${NC}, ${RED}$errors error(s)${NC}, ${YELLOW}$warnings warning(s)${NC}"
 
 if [[ $errors -gt 0 ]]; then
     exit 1

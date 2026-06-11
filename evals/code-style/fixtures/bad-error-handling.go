@@ -17,20 +17,20 @@ type ServiceReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-// ensureConfigMap ensures the ConfigMap exists in the given namespace.
 func (r *ServiceReconciler) ensureConfigMap(ctx context.Context, name, ns string) error {
 	var cm corev1.ConfigMap
 	err := r.Get(ctx, types.NamespacedName{Name: name, Namespace: ns}, &cm)
 	if err != nil {
 		if errors.IsNotFound(err) {
-			return fmt.Errorf("configmap %s/%s not found in namespace", ns, name)
+			// BAD: capitalized error string
+			return fmt.Errorf("ConfigMap %s/%s Not Found in namespace", ns, name)
 		}
-		return fmt.Errorf("failed to get configmap %s/%s: %w", ns, name, err)
+		// BAD: %s instead of %w — error not wrapped
+		return fmt.Errorf("failed to get configmap %s/%s: %s", ns, name, err)
 	}
 	return nil
 }
 
-// serviceEndpoint returns the ClusterIP for the named service.
 func (r *ServiceReconciler) serviceEndpoint(ctx context.Context, name, ns string) (string, error) {
 	var svc corev1.Service
 	err := r.Get(ctx, types.NamespacedName{Name: name, Namespace: ns}, &svc)
@@ -38,26 +38,28 @@ func (r *ServiceReconciler) serviceEndpoint(ctx context.Context, name, ns string
 		if errors.IsNotFound(err) {
 			return "", nil
 		}
-		return "", fmt.Errorf("failed to get service: %w", err)
+		// BAD: capitalized + %s instead of %w
+		return "", fmt.Errorf("Failed to get service: %s", err)
+	} else {
+		// BAD: unnecessary else after return
+		if svc.Spec.ClusterIP == "" {
+			return "", fmt.Errorf("Service %s has no ClusterIP", name)
+		}
+		return svc.Spec.ClusterIP, nil
 	}
-	if svc.Spec.ClusterIP == "" {
-		return "", fmt.Errorf("service %s has no ClusterIP", name)
-	}
-	return svc.Spec.ClusterIP, nil
 }
 
-// reconcileService reconciles the service and its associated ConfigMap.
 func (r *ServiceReconciler) reconcileService(ctx context.Context, req ctrl.Request) error {
 	log := ctrl.LoggerFrom(ctx)
 
-	endpoint, err := r.serviceEndpoint(ctx, req.Name, req.Namespace)
-	if err != nil {
-		return fmt.Errorf("failed to get service endpoint: %w", err)
-	}
+	// BAD: discarded error
+	endpoint, _ := r.serviceEndpoint(ctx, req.Name, req.Namespace)
 	log.Info("got endpoint", "endpoint", endpoint)
 
-	if err := r.ensureConfigMap(ctx, req.Name+"-config", req.Namespace); err != nil {
-		return fmt.Errorf("failed to ensure configmap: %w", err)
+	// BAD: capitalized + %s instead of %w
+	err := r.ensureConfigMap(ctx, req.Name+"-config", req.Namespace)
+	if err != nil {
+		return fmt.Errorf("Failed to ensure ConfigMap: %s", err)
 	}
 
 	return nil

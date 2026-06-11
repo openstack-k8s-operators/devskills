@@ -1,1 +1,1 @@
-Review the Go file evals/code-review/fixtures/{{target_file}} for openstack-k8s-operators conventions.
+Review the Go file evals/code-review/fixtures/{{target_file}} for openstack-k8s-operators conventions. Do not modify or fix the file — only report findings.
