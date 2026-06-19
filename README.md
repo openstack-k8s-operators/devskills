@@ -144,6 +144,23 @@ the plugin.
 
 For usage examples, workflows, and skill reference, see the [GETTING-STARTED](docs/GETTING-STARTED.md) guide.
 
+## Evals
+
+Behavioral testing for skills using [promptfoo](https://promptfoo.dev)
+with the `claude-agent-sdk` provider. Each skill has a self-contained
+eval directory with prompt templates, Go fixtures, and score-based
+Python graders.
+
+```bash
+make eval-setup                      # install dependencies (one-time)
+make eval EVAL_SKILL=code-review     # run evals for one skill
+make eval                            # run all evals
+make new-eval my-skill               # scaffold eval for a new skill
+```
+
+See the [Evals README](evals/README.md) for framework details, test
+tiers, grader conventions, and per-skill documentation.
+
 ## Documentation
 
 - **[Getting Started](docs/GETTING-STARTED.md)** — usage examples, workflows, and skill reference

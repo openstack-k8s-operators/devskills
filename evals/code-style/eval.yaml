@@ -1,0 +1,65 @@
+description: "Evals for /code-style skill"
+
+providers:
+  - id: anthropic:claude-agent-sdk
+    label: claude-code
+    config:
+      model: claude-sonnet-4-6
+      working_dir: ./fixtures
+      plugins:
+        - type: local
+          path: ../../
+      skills:
+        - openstack-k8s-agent-tools:code-style
+      append_allowed_tools: ["Skill", "Read", "Bash", "Grep", "Glob"]
+      permission_mode: auto
+      max_turns: 20
+      max_budget_usd: 1.50
+      ask_user_question:
+        behavior: first_option
+
+prompts:
+  - file://prompt.txt
+
+defaultTest:
+  options:
+    disableVarExpansion: true
+
+tests:
+  # --- Smoke: produces style recommendations ---
+
+  - description: "smoke/needs-modernize-gets-recommendations"
+    vars:
+      target_file: needs-modernize.go
+    assert:
+      - type: python
+        threshold: 0.4
+        value: file://graders/smoke_recommendations.py
+      - type: latency
+        threshold: 120000
+
+  - description: "smoke/bad-error-handling-gets-findings"
+    vars:
+      target_file: bad-error-handling.go
+    assert:
+      - type: python
+        threshold: 0.4
+        value: file://graders/smoke_recommendations.py
+
+  # --- Standard: catches specific patterns ---
+
+  - description: "standard/catches-error-handling-issues"
+    vars:
+      target_file: bad-error-handling.go
+    assert:
+      - type: python
+        threshold: 0.5
+        value: file://graders/error_handling_issues.py
+
+  - description: "standard/catches-modernization-issues"
+    vars:
+      target_file: needs-modernize.go
+    assert:
+      - type: python
+        threshold: 0.5
+        value: file://graders/modernization_issues.py

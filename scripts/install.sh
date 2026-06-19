@@ -223,6 +223,58 @@ uninstall() {
     esac
 }
 
+setup_evals() {
+    info "Setting up eval dependencies..."
+
+    if ! command -v npm &> /dev/null; then
+        error "npm not found. Install Node.js first."
+    fi
+
+    if [ -d "$PLUGIN_DIR/node_modules/@anthropic-ai/claude-agent-sdk" ]; then
+        info "Eval dependencies already installed"
+    else
+        info "Installing @anthropic-ai/claude-agent-sdk..."
+        (cd "$PLUGIN_DIR" && npm install --no-save) || error "npm install failed"
+        info "Eval dependencies installed"
+    fi
+
+    if command -v npx &> /dev/null; then
+        info "npx: available (for promptfoo)"
+    else
+        warn "npx not found — needed to run evals"
+    fi
+
+    info "Eval setup complete. Run: make eval EVAL_SKILL=code-review"
+}
+
+eval_run() {
+    local skill="${1:-}"
+
+    setup_evals
+
+    if ! command -v npx &> /dev/null; then
+        error "npx not found. Install Node.js to run evals."
+    fi
+
+    if [ -n "$skill" ]; then
+        local config="$PLUGIN_DIR/evals/$skill/eval.yaml"
+        if [ ! -f "$config" ]; then
+            error "Eval config not found: $config"
+        fi
+        info "Running evals for skill: $skill"
+        npx promptfoo@latest eval -c "$config" --no-cache
+    else
+        info "Running all evals..."
+        for config in "$PLUGIN_DIR"/evals/*/eval.yaml; do
+            [ -f "$config" ] || continue
+            local name
+            name=$(basename "$(dirname "$config")")
+            info "--- $name ---"
+            npx promptfoo@latest eval -c "$config" --no-cache || true
+        done
+    fi
+}
+
 check_dependencies() {
     info "Checking dependencies..."
 
@@ -278,6 +330,8 @@ Options:
   --opencode           Install globally for OpenCode (~/.config/opencode/)
   --uninstall-claude   Remove from Claude Code
   --uninstall-opencode Remove from OpenCode
+  --setup-evals        Install eval dependencies (promptfoo + claude-agent-sdk)
+  --run-evals [SKILL]  Run evals (all skills, or specific SKILL)
   --check              Check dependencies only
   --help               Show this help message
 
@@ -301,6 +355,8 @@ main() {
             --opencode)          action="opencode";         shift ;;
             --uninstall-claude)  action="uninstall-claude"; shift ;;
             --uninstall-opencode) action="uninstall-opencode"; shift ;;
+            --setup-evals)       action="setup-evals";      shift ;;
+            --run-evals)         action="run-evals"; shift; eval_skill="${1:-}"; [ -n "$eval_skill" ] && shift ;;
             --check)             action="check";            shift ;;
             --help)              show_usage; exit 0 ;;
             *)                   error "Unknown option: $1" ;;
@@ -319,6 +375,8 @@ main() {
         opencode)          install_opencode ;;
         uninstall-claude)  uninstall claude ;;
         uninstall-opencode) uninstall opencode ;;
+        setup-evals)       setup_evals ;;
+        run-evals)         eval_run "$eval_skill" ;;
         check)             check_dependencies ;;
     esac
 }

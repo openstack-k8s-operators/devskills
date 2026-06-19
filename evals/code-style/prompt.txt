@@ -1,0 +1,1 @@
+Analyze the Go file {{target_file}} in the current directory for code style issues following openstack-k8s-operators conventions. Do not modify or fix the file — only report findings.

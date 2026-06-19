@@ -1,0 +1,77 @@
+description: "Evals for /code-review skill"
+
+prompts:
+  - id: file://prompt.txt
+    label: natural-language
+
+providers:
+  - id: anthropic:claude-agent-sdk
+    label: claude-code
+    prompts:
+      - natural-language
+    config:
+      model: claude-sonnet-4-6
+      working_dir: ../../
+      plugins:
+        - type: local
+          path: ../../
+      skills:
+        - openstack-k8s-agent-tools:code-review
+      append_allowed_tools: ["Skill", "Read", "Bash", "Grep", "Glob"]
+      permission_mode: auto
+      max_turns: 40
+      max_budget_usd: 3.00
+      ask_user_question:
+        behavior: first_option
+
+defaultTest:
+  options:
+    disableVarExpansion: true
+
+tests:
+  # --- Smoke: structural output checks ---
+
+  - description: "smoke/bad-controller-request-changes"
+    vars:
+      target_file: bad-controller.go
+    assert:
+      - type: python
+        threshold: 0.4
+        value: file://graders/smoke_review_structure.py
+      - type: icontains
+        value: "REQUEST CHANGES"
+      - type: latency
+        threshold: 600000
+
+  - description: "smoke/good-controller-produces-review"
+    vars:
+      target_file: good-controller.go
+    assert:
+      - type: python
+        threshold: 0.4
+        value: file://graders/smoke_review_structure.py
+
+  # --- Standard: behavioral checks ---
+
+  - description: "standard/bad-controller-finds-finalizer-issue"
+    vars:
+      target_file: bad-controller.go
+    assert:
+      - type: python
+        threshold: 0.5
+        value: file://graders/finds_finalizer_issue.py
+
+  - description: "standard/skill-invocation"
+    vars:
+      target_file: bad-controller.go
+    assert:
+      - type: skill-used
+        value: openstack-k8s-agent-tools:code-review
+
+  - description: "standard/agent-methodology-followed"
+    vars:
+      target_file: bad-controller.go
+    assert:
+      - type: python
+        threshold: 0.75
+        value: file://graders/agent_methodology.py

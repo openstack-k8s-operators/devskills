@@ -1,0 +1,3 @@
+# Eval fixtures contain DELIBERATE code issues for testing.
+# Mark as generated so linters, formatters, and code review tools skip them.
+evals/*/fixtures/*.go linguist-generated=true -diff
