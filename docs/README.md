@@ -17,6 +17,7 @@ Documentation for openstack-k8s-operators operator development and troubleshooti
 | **code-style** | Go style enforcement | `/code-style` |
 | **analyze-must-gather** | Must-gather archive analysis | `/analyze-must-gather` |
 | **explain-flow** | Code flow analysis | `/explain-flow` |
+| **onboarding-buddy** | Interactive operator onboarding | `/onboarding-buddy` |
 | **feature** | Feature planning with Jira integration | `/feature OSPRH-2345` |
 | **bug** | Bug fix planning (alias for feature) | `/bug OSPRH-2345` |
 | **task-executor** | Plan execution with checkpointing | `/task-executor` |

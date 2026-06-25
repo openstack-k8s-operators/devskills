@@ -1,0 +1,6 @@
+/onboarding-buddy
+
+Automated eval — respond in ONE turn. Skip interactive menus.
+
+I understand Nova conceptually. Trace the Nova reconciler step by step with flow
+diagrams and invoke /explain-flow on internal/controller/nova/.

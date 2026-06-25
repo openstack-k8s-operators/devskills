@@ -1,0 +1,7 @@
+/onboarding-buddy basics
+
+Automated eval — respond in ONE turn. Skip Step 0 and all interactive menus.
+
+Teach me Kubernetes operator fundamentals: client-go, controller-runtime, and kubebuilder.
+I'm completely new to operators. Cover section A1 (client-go) only.
+Do not tour this repository, discuss make test, or cover testing and contributing.

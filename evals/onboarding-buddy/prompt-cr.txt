@@ -1,0 +1,5 @@
+/onboarding-buddy Nova
+
+Automated eval — respond in ONE turn. Skip Step 0 and all interactive menus.
+
+Tell me about the Nova custom resource in this repository.

@@ -1,0 +1,85 @@
+description: "Evals for /onboarding-buddy skill"
+
+prompts:
+  - id: file://prompt-fundamentals.txt
+    label: fundamentals
+  - id: file://prompt-repo.txt
+    label: repo-tour
+  - id: file://prompt-cr.txt
+    label: cr-routing
+  - id: file://prompt-explain-flow.txt
+    label: explain-flow
+  - id: file://prompt-skill-invoke.txt
+    label: skill-invoke
+
+providers:
+  - id: anthropic:claude-agent-sdk
+    label: claude-code
+    config:
+      model: claude-sonnet-4-6
+      working_dir: ./fixtures/sample-operator
+      plugins:
+        - type: local
+          path: ../../
+      skills:
+        - openstack-k8s-agent-tools:onboarding-buddy
+        - openstack-k8s-agent-tools:explain-flow
+      append_allowed_tools: ["Skill", "Read", "Bash", "Grep", "Glob"]
+      permission_mode: auto
+      max_turns: 8
+      max_budget_usd: 2.50
+      ask_user_question:
+        behavior: deny
+
+defaultTest:
+  options:
+    disableVarExpansion: true
+
+tests:
+  # --- Smoke: input routing ---
+
+  - description: "smoke/track-a-fundamentals"
+    prompts:
+      - fundamentals
+    assert:
+      - type: python
+        threshold: 0.5
+        value: file://graders/track_a_fundamentals.py
+      - type: latency
+        threshold: 180000
+
+  - description: "smoke/track-b-repo-discovery"
+    prompts:
+      - repo-tour
+    assert:
+      - type: python
+        threshold: 0.5
+        value: file://graders/track_b_repo_discovery.py
+
+  - description: "smoke/cr-routing-nova"
+    prompts:
+      - cr-routing
+    assert:
+      - type: python
+        threshold: 0.5
+        value: file://graders/cr_routing.py
+
+  # --- Standard: delegation and natural-language routing ---
+
+  - description: "standard/natural-language-repo-tour"
+    prompts:
+      - skill-invoke
+    assert:
+      - type: python
+        threshold: 0.5
+        value: file://graders/natural_language_repo_tour.py
+
+  - description: "standard/explain-flow-delegation"
+    prompts:
+      - explain-flow
+    assert:
+      - type: python
+        threshold: 0.5
+        value: file://graders/explain_flow_handoff.py
+      - type: skill-used
+        value: openstack-k8s-agent-tools:explain-flow

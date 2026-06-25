@@ -47,6 +47,7 @@ evals/<skill>/
 |-------|-------|-------------|
 | [code-review](code-review/README.md) | 5 | Structured review output, severity classification, skill invocation, agent methodology |
 | [code-style](code-style/README.md) | 4 | Style recommendations, error handling detection, modernization issue detection |
+| [onboarding-buddy](onboarding-buddy/README.md) | 5 | Track A/B input routing, fixture repo discovery, explain-flow delegation |
 
 ## Adding Evals for a New Skill
 

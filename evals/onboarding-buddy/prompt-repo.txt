@@ -1,0 +1,8 @@
+/onboarding-buddy repo
+
+Automated eval — respond in ONE turn. Skip Step 0 and all interactive menus.
+
+Give me a repo tour. I'm new to operators.
+Read AGENTS.md and summarize the custom resources (Nova, GlanceAPI),
+directory layout, and reconcile request path.
+Do not trace reconciler code or invoke /explain-flow.
