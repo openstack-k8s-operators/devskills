@@ -1,0 +1,3 @@
+/onboarding-buddy repo
+
+Give me a repo tour. I'm new to operators.

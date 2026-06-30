@@ -82,6 +82,7 @@ make install-claude
 | `/support-triage` | `support-triage` | RHOSO must-gather triage using omc and Support Enablement diagnostics |
 | `/analyze-zuul-ci-logs` | — | Analyze logs downloaded from a Zuul CI job |
 | `/explain-flow` | — | Code flow analysis for controllers |
+| `/onboarding-buddy` | — | Interactive onboarding — operator fundamentals and repo tour (uses `/explain-flow` for code traces) |
 | `/feature` | `feature` | Feature/bug planning with Jira, cross-repo analysis, structured strategies |
 | `/bug` | `feature` | Bug fix planning — alias for `/feature` with bug-focused context |
 | `/code-review` | `code-review` | Code review against openstack-k8s-operators conventions (PR number, branch diff, or specific files) |

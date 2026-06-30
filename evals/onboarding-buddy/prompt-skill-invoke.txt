@@ -1,0 +1,4 @@
+Automated eval — respond in ONE turn. Skip Step 0 and all interactive menus.
+Do not ask baseline questions — give the repo tour immediately.
+
+I'm new to openstack-k8s-operators. Tour this operator repository.

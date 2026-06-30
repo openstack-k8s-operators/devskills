@@ -20,6 +20,7 @@ make install-claude
 | `/code-style` | `/code-style` | Go style enforcement |
 | `/analyze-must-gather` | `/analyze-must-gather` | Must-gather archive analysis |
 | `/explain-flow` | `/explain-flow` | Code flow analysis |
+| `/onboarding-buddy` | `/onboarding-buddy` | Interactive operator onboarding and repo tour |
 | `/feature` | `/feature OSPRH-2345` | Feature planning with Jira |
 | `/bug` | `/bug OSPRH-2345` | Bug fix planning |
 | `/task-executor` | `/task-executor` | Plan execution with checkpointing |

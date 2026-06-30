@@ -160,7 +160,23 @@ Not every skill needs an agent. Use agents when:
 - The work is complex enough to benefit from isolated context
 - The methodology is reusable across different inputs
 
-Self-contained skills (like `/debug-operator`, `/test-operator`) embed their logic directly in the SKILL.md. They're simpler and don't need the orchestrator/worker split.
+Self-contained skills (like `/debug-operator`, `/test-operator`, `/onboarding-buddy`) embed their logic directly in the SKILL.md. They're simpler and don't need the orchestrator/worker split.
+
+### Operator repo docs
+
+`/onboarding-buddy` teaches generic operator fundamentals (Track A) from its
+SKILL.md. Per-operator content comes from each operator repository:
+
+| Source | Purpose |
+|--------|---------|
+| `AGENTS.md` | Project overview, conventions, build/test — read first |
+| `doc/` or `docs/` | Operator-specific guides (`design.md`, `developer.md`, etc.) — not all operators use the same directory name |
+| [dev-docs](https://github.com/openstack-k8s-operators/dev-docs) | Cross-operator conventions (conditions, webhooks, envtest, developer guide) |
+
+The skill reads `AGENTS.md` from the current working directory, discovers
+`doc/` vs `docs/`, and falls back to `api/*/v1beta1/*_types.go` for CR kinds.
+For code-level traces it delegates to `/explain-flow`. Add `agents/onboarding-buddy/AGENT.md`
+only if a dispatched subagent is needed later — the skill is self-contained by default.
 
 ## Project Structure
 
@@ -179,6 +195,7 @@ openstack-k8s-agent-tools/
 |   +-- analyze-must-gather/SKILL.md # /analyze-must-gather - dispatches support-triage when RHOSO detected
 |   +-- support-triage/SKILL.md # /support-triage - dispatches support-triage agent
 |   +-- explain-flow/SKILL.md  # /explain-flow - self-contained
+|   +-- onboarding-buddy/SKILL.md # /onboarding-buddy - self-contained
 +-- agents/                    # Agent worker definitions
 |   +-- feature/AGENT.md       # Planning methodology
 |   +-- task-executor/AGENT.md # Execution principles
