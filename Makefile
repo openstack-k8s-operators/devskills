@@ -1,7 +1,7 @@
 .PHONY: install-claude install-opencode uninstall-claude uninstall-opencode \
        check test test-memory validate new-skill new-agent \
        eval-setup eval eval-view eval-clean \
-       new-eval help
+       new-eval docs help
 
 
 
@@ -55,6 +55,11 @@ eval-clean: ## Remove eval dependencies and artifacts
 
 eval-view: ## Open promptfoo web UI to view eval results
 	@npx promptfoo@latest view
+
+## Documentation
+
+docs: ## Regenerate plugin documentation (requires skillsaw)
+	@skillsaw docs -o docs/
 
 ## Scaffolding
 
