@@ -17,105 +17,22 @@ following repo conventions.
 
 ## Domain Knowledge
 
-### Repository Three-Layer Structure
+At the start of every session, read the architecture repository's `AGENTS.md`
+for repo conventions (three-layer structure, kustomize patterns, automation
+stage format, stage ordering and timeouts, `pre_stage_run` hook format,
+validation steps, and YAML rules). That file is the single source of truth
+for repository-level conventions.
 
-```
-lib/                    ← Layer 1: shared base templates (NEVER modify)
-  control-plane/
-  dataplane/
-  networking/
+### Agent-specific context
 
-dt/[<category>/]<name>/ ← Layer 2: DT-specific overlays (you generate this)
-va/[<category>/]<name>/ ← Layer 2: VA overlays (same structure, read during analysis)
-  kustomization.yaml      Some use a category subdirectory (e.g. dt/nova/nova04delta/),
-  values.yaml             others sit directly under dt/ or va/ (e.g. dt/uni07epsilon/).
-  service-values.yaml     Match the convention of the closest existing DT or VA.
-  control-plane/
-  edpm*/
-  networking/
-
-examples/dt/[<category>/]<name>/ ← Layer 3: user-facing customizable copies (you generate this)
-examples/va/[<category>/]<name>/ ← Layer 3: VA examples (same structure, read during analysis)
-  kustomization.yaml      Mirrors the dt/ or va/ structure above.
-  values.yaml
-  service-values.yaml
-```
-
-Changes to `lib/` affect ALL VAs and DTs. Never modify `lib/` files.
-
-### DT vs VA
-
-- **Deployment Topologies (DTs)** — test-only configurations. Never present as production guidance.
-- **Validated Architectures (VAs)** — production-oriented. A VA is a special DT with the same
+- **DTs are test-only**; VAs are production-oriented. A VA uses the same
   kustomize structure under `va/` and `examples/va/`.
-
-When analyzing existing topologies, treat both `dt/` and `va/` as candidates.
-This agent generates files under `dt/` or `va/` depending on the target
-topology type, and reads from both during analysis.
-
-### Kustomize Patterns
-
-Both DTs and VAs use `kind: Component` with the replacements pattern:
-- **Source**: ConfigMaps (`service-values`, `network-values`) providing field values
-- **Target**: `OpenStackControlPlane` CR fields (kustomize `create: true` option creates the field path if absent)
-
-Services are enabled/disabled through replacements referencing `service-values` ConfigMap fields.
-
-### Automation Stage Sequencing
-
-Standard stage order in `automation/vars/<name>.yaml`:
-
-1. `nncp-configuration` — Node Network Configuration Policies (may include pre-stage node labeling)
-2. `network-configuration` — MetalLB, broader networking (wait for MetalLB speaker pods)
-3. `control-plane` — OpenStackControlPlane CR (long timeout: 60m)
-4. `edpm-networker-nodeset` — Networker dataplane nodeset (if applicable)
-5. `edpm-networker-deployment` — Networker deployment (if applicable)
-6. `edpm-nodeset` — Compute dataplane nodeset (wait for SetupReady)
-7. `edpm-deployment` — Compute dataplane deployment (long timeout: 40-60m)
-
-Not all stages are required. Simple topologies may skip networker stages.
-Ceph-based topologies split dataplane into pre-ceph and post-ceph stages.
-
-### Stage Definition Format
-
-Each automation vars file wraps stages under `vas: <topology-name>:` (the architecture
-repo uses `vas:` as the top-level key for both VAs and DTs):
-
-```yaml
-vas:
-  <topology-name>:
-    stages:
-      - name: nncp-configuration
-        path: examples/dt/<category>/<name>/control-plane/networking/nncp
-        values:
-          - name: network-values
-            src_file: values.yaml
-        build_output: nncp.yaml
-        wait_conditions:
-          - >-
-            oc -n openstack wait nncp
-            -l osp/nncm-config-type=standard
-            --for jsonpath='{.status.conditions[0].reason}'=SuccessfullyConfigured
-            --timeout=5m
-```
-
-The `values` field uses objects with `name` (ConfigMap name) and `src_file` (filename
-relative to `path`). The optional `pre_stage_run` field uses structured hook objects:
-
-```yaml
-        pre_stage_run:
-          - name: "Apply cinder-lvm label"
-            type: cr
-            kind: Node
-            resource_name: master-0
-            state: patched
-            definition:
-              metadata:
-                labels:
-                  openstack.org/cinder-lvm: ""
-```
-
-Stages are validated against `.ci/automation-schema.yaml`.
+- When analyzing existing topologies, treat both `dt/` and `va/` as
+  candidates. Generate files under `dt/` or `va/` depending on the target
+  topology type.
+- Some topologies use a category subdirectory (e.g. `dt/nova/nova04delta/`),
+  others sit directly under `dt/` (e.g. `dt/uni07epsilon/`). Match the
+  convention of the closest existing DT or VA.
 
 ## Process
 
