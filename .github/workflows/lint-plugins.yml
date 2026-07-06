@@ -13,9 +13,11 @@ jobs:
       contents: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
       - name: Run skillsaw
-        uses: stbenjam/skillsaw@v0
+        uses: stbenjam/skillsaw@a1d7340ef19cd0949f884a5381155843589dbad8 # v0
         with:
           strict: false
           version: '0.11.5'
