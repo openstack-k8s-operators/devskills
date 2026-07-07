@@ -1,0 +1,54 @@
+vas:
+  <topology-name>:
+    stages:
+      - name: nncp-configuration
+        path: examples/dt/<topology>/control-plane/networking/nncp
+        values:
+          - name: network-values
+            src_file: values.yaml
+        wait_conditions:
+          - >-
+            oc -n openstack wait nncp
+            -l osp/nncm-config-type=standard
+            --for jsonpath='{.status.conditions[0].reason}'=SuccessfullyConfigured
+            --timeout=5m
+
+      - name: network-configuration
+        path: examples/dt/<topology>/control-plane/networking
+        values:
+          - name: network-values
+            src_file: values.yaml
+
+      - name: control-plane
+        path: examples/dt/<topology>/control-plane
+        values:
+          - name: network-values
+            src_file: values.yaml
+          - name: service-values
+            src_file: service-values.yaml
+        wait_conditions:
+          - >-
+            oc -n openstack wait openstackcontrolplane controlplane
+            --for condition=Ready
+            --timeout=60m
+
+      - name: edpm-nodeset
+        path: examples/dt/<topology>/edpm/nodeset
+        values:
+          - name: network-values
+            src_file: values.yaml
+        wait_conditions:
+          - >-
+            oc -n openstack wait
+            openstackdataplanenodeset openstack-edpm
+            --for condition=SetupReady
+            --timeout=10m
+
+      - name: edpm-deployment
+        path: examples/dt/<topology>/edpm/deployment
+        wait_conditions:
+          - >-
+            oc -n openstack wait
+            openstackdataplanedeployment edpm-deployment
+            --for condition=Ready
+            --timeout=60m
