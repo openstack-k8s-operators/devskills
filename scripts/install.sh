@@ -223,6 +223,22 @@ uninstall() {
     esac
 }
 
+install_docs() {
+    info "Installing docs dependencies..."
+
+    if ! command -v uv &> /dev/null; then
+        error "uv not found. Install uv first: https://docs.astral.sh/uv/"
+    fi
+
+    if command -v skillsaw &> /dev/null; then
+        info "skillsaw already installed"
+    else
+        info "Installing skillsaw..."
+        uv tool install skillsaw || error "Failed to install skillsaw"
+        info "skillsaw installed"
+    fi
+}
+
 setup_evals() {
     info "Setting up eval dependencies..."
 
@@ -330,6 +346,7 @@ Options:
   --opencode           Install globally for OpenCode (~/.config/opencode/)
   --uninstall-claude   Remove from Claude Code
   --uninstall-opencode Remove from OpenCode
+  --install-docs       Install docs dependencies (skillsaw)
   --setup-evals        Install eval dependencies (promptfoo + claude-agent-sdk)
   --run-evals [SKILL]  Run evals (all skills, or specific SKILL)
   --check              Check dependencies only
@@ -355,6 +372,7 @@ main() {
             --opencode)          action="opencode";         shift ;;
             --uninstall-claude)  action="uninstall-claude"; shift ;;
             --uninstall-opencode) action="uninstall-opencode"; shift ;;
+            --install-docs)      action="install-docs";     shift ;;
             --setup-evals)       action="setup-evals";      shift ;;
             --run-evals)         action="run-evals"; shift; eval_skill="${1:-}"; [ -n "$eval_skill" ] && shift ;;
             --check)             action="check";            shift ;;
@@ -375,6 +393,7 @@ main() {
         opencode)          install_opencode ;;
         uninstall-claude)  uninstall claude ;;
         uninstall-opencode) uninstall opencode ;;
+        install-docs)      install_docs ;;
         setup-evals)       setup_evals ;;
         run-evals)         eval_run "$eval_skill" ;;
         check)             check_dependencies ;;
