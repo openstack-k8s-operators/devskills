@@ -1,9 +1,7 @@
-Create a new Deployment Topology based on these requirements:
+/create-dt
 
 {{request}}
 
-The architecture repo contains these existing topologies:
+Existing topologies:
 
 {{tree}}
-
-Follow all 7 steps of the create-dt process. Show your work for each step including the Context Summary, DT/VA analysis, strategy proposal, and generated file structure.

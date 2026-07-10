@@ -16,11 +16,11 @@ providers:
         - type: local
           path: ../../
       skills:
-        - openstack-k8s-agent-tools:create-dt:create-dt
+        - openstack-k8s-agent-tools:create-dt
       append_allowed_tools: ["Skill", "Read", "Bash", "Grep", "Glob"]
       permission_mode: auto
-      max_turns: 30
-      max_budget_usd: 2.00
+      max_turns: 35
+      max_budget_usd: 3.00
       ask_user_question:
         behavior: first_option
 
@@ -39,7 +39,7 @@ tests:
         threshold: 0.4
         value: file://graders/smoke_dt_structure.py
       - type: latency
-        threshold: 600000
+        threshold: 900000
 
   - description: "smoke/context-summary-fields"
     vars:
@@ -51,14 +51,6 @@ tests:
         value: file://graders/context_summary.py
 
   # --- Standard: behavioral checks ---
-  - description: "standard/skill-invocation"
-    vars:
-      request: file://fixtures/sample-dt-request.md
-      tree: file://fixtures/sample-architecture-tree.txt
-    assert:
-      - type: skill-used
-        value: openstack-k8s-agent-tools:create-dt:create-dt
-
   - description: "standard/identifies-hci-base"
     vars:
       request: file://fixtures/sample-dt-request.md

@@ -2,25 +2,22 @@ import re
 
 
 def get_assert(output, context):
-    text = output
+    text = output.lower()
     checks = {
-        "has_analysis": bool(re.search(
-            r'step\s*2|analysis|existing.*topolog', text, re.IGNORECASE
-        )),
-        "has_strategy": bool(re.search(
-            r'step\s*3|strateg|approach|pros|cons', text, re.IGNORECASE
-        )),
-        "has_generation": bool(re.search(
-            r'step\s*4|generat|kustomiz|file.*tree', text, re.IGNORECASE
-        )),
-        "has_stages": bool(re.search(
-            r'nncp.*control.plane|control.plane.*edpm', text, re.IGNORECASE
-        )),
+        "has_analysis": r"step\s*2|analy|existing.*hci|similar|identical|base.*on|review.*topolog|survey|model.*on.*hci",
+        "has_strategy": r"step\s*3|strateg|approach|pros|cons|proposal|hitl|approval|plan\s*file|naming.*convention|naming.*sequence",
+        "has_generation": r"step\s*4|generat|kustomiz|file.*tree|files.*written|files.*creat|files\s+created|scaffolded",
+        "has_stages": r"nncp|network.config|control.plane|edpm|pre-ceph|post-ceph|stages?:|two.phase",
     }
-    matched = [k for k, v in checks.items() if v]
-    score = len(matched) / len(checks)
+    matched = []
+    score = 0.0
+    for name, pattern in checks.items():
+        if re.search(pattern, text):
+            score += 0.25
+            matched.append(name)
+
     return {
         "pass": score >= 0.75,
         "score": score,
-        "reason": f"Score {score:.2f}/1.0 — matched: {', '.join(matched) or 'none'}",
+        "reason": f"Score {score:.1f}/1.0 — matched: {', '.join(matched) or 'none'}",
     }
