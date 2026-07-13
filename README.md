@@ -86,6 +86,7 @@ make install-claude
 | `/feature` | `feature` | Feature/bug planning with Jira, cross-repo analysis, structured strategies |
 | `/bug` | `feature` | Bug fix planning — alias for `/feature` with bug-focused context |
 | `/code-review` | `code-review` | Code review against openstack-k8s-operators conventions (PR number, branch diff, or specific files) |
+| `/create-dt` | `create-dt` | Scaffold RHOSO Deployment Topologies/Validated Architectures for the architecture repo with existing DT/VA analysis and automation |
 | `/task-executor` | `task-executor` | Execute plans task-by-task with checkpointing and resume |
 | `/backport-review` | — | Compare downstream backport change requests against upstream Gerrit patches |
 | `/jira` | — | Jira integration — ticket inspection, hierarchy validation, outcome posting |

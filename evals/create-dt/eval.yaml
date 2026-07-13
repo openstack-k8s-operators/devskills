@@ -1,0 +1,70 @@
+description: "Evals for /create-dt skill"
+
+prompts:
+  - id: file://prompt.txt
+    label: natural-language
+
+providers:
+  - id: anthropic:claude-agent-sdk
+    label: claude-code
+    prompts:
+      - natural-language
+    config:
+      model: claude-sonnet-4-6
+      working_dir: ../../
+      plugins:
+        - type: local
+          path: ../../
+      skills:
+        - openstack-k8s-agent-tools:create-dt
+      append_allowed_tools: ["Skill", "Read", "Bash", "Grep", "Glob"]
+      permission_mode: auto
+      max_turns: 35
+      max_budget_usd: 3.00
+      ask_user_question:
+        behavior: first_option
+
+defaultTest:
+  options:
+    disableVarExpansion: true
+
+tests:
+  # --- Smoke: structural output checks ---
+  - description: "smoke/produces-dt-structure"
+    vars:
+      request: file://fixtures/sample-dt-request.md
+      tree: file://fixtures/sample-architecture-tree.txt
+    assert:
+      - type: python
+        threshold: 0.4
+        value: file://graders/smoke_dt_structure.py
+      - type: latency
+        threshold: 900000
+
+  - description: "smoke/context-summary-fields"
+    vars:
+      request: file://fixtures/sample-dt-request.md
+      tree: file://fixtures/sample-architecture-tree.txt
+    assert:
+      - type: python
+        threshold: 0.4
+        value: file://graders/context_summary.py
+
+  # --- Standard: behavioral checks ---
+  - description: "standard/identifies-hci-base"
+    vars:
+      request: file://fixtures/sample-dt-request.md
+      tree: file://fixtures/sample-architecture-tree.txt
+    assert:
+      - type: python
+        threshold: 0.5
+        value: file://graders/identifies_hci_base.py
+
+  - description: "standard/agent-methodology-followed"
+    vars:
+      request: file://fixtures/sample-dt-request.md
+      tree: file://fixtures/sample-architecture-tree.txt
+    assert:
+      - type: python
+        threshold: 0.75
+        value: file://graders/agent_methodology.py
