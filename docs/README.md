@@ -21,6 +21,7 @@ Documentation for openstack-k8s-operators operator development and troubleshooti
 | **feature** | Feature planning with Jira integration | `/feature OSPRH-2345` |
 | **bug** | Bug fix planning (alias for feature) | `/bug OSPRH-2345` |
 | **task-executor** | Plan execution with checkpointing | `/task-executor` |
+| **commit-message** | Draft a commit message with a Jira line when Jira-sourced | `/commit-message OSPRH-2345` |
 | **code-review** | Code review (dev-docs conventions) | `/code-review` |
 | **backport-review** | Downstream vs upstream patch comparison | `/backport-review` |
 | **jira** | Jira hierarchy validation and integration | `/jira OSPRH-2345` |

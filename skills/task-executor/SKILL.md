@@ -42,7 +42,7 @@ The agent handles: sequential execution, test-first, checkpointing, group bounda
    d. Update the plan file (mark task done)
    e. At group boundaries: pause and ask user to review
 1. On completion — post-implementation:
-   a. Draft commit message (with Jira link if applicable) and present for approval
+   a. Draft commit message via the shared commit-message agent (with a Markdown Jira link when Jira-sourced) and present for approval
    b. Commit with `-s -S` only after user approves — NEVER push
    c. Update the plan file with an Outcome section
    d. If Jira-sourced: follow `/jira` skill rules — post outcome comment on the **story** (never the epic), and optionally suggest creating Jira tasks from the plan breakdown
@@ -57,5 +57,5 @@ The executor follows these principles:
 - **Group boundaries**: pause for user review between functional groups
 - **No guessing**: stop and ask on ambiguity
 - **Code quality**: gopls modernize, lib-common first, structured logging, error wrapping
-- **Commit**: human-approved message, signed (`-s -S`), with Jira link — never push
+- **Commit**: human-approved message, signed (`-s -S`), with a Markdown Jira link when Jira-sourced — never push
 - **Outcome**: update plan file and optionally comment on Jira ticket

@@ -530,31 +530,19 @@ Present the review findings to the user. If the review flags Critical or Major i
 
 ### Step 2: Commit Message
 
-Compose the commit message following [git commit guidelines](https://git-scm.com/book/en/v2/Distributed-Git-Contributing-to-a-Project):
-
-**Format:**
+Use the shared `commit-message` agent to draft the message. Pass the complete set of changes, why they were made, and the plan's **Source** field. Pass a Jira key only when the plan identifies that ticket as its Jira source; otherwise say that the plan is not Jira-sourced. The agent owns the message format, including the linked `Jira: [<KEY>](https://issues.redhat.com/browse/<KEY>)` line when applicable.
 
 ```
-<type>: <subject line> (50 chars max)
-
-<body> (wrap at 72 chars)
-
-Explain what changed and why, not how (the diff shows how).
-Reference the Jira ticket if one was used to plan this work.
-
-Jira: [OSPRH-2345](https://issues.redhat.com/browse/OSPRH-2345)
+Agent(
+  subagent_type="openstack-k8s-agent-tools:commit-message:commit-message",
+  description="Draft commit message",
+  prompt="Draft for <all changes and rationale>. Plan source: <Source field>."
+)
 ```
-
-**Rules:**
-
-- Subject line: imperative mood, no period, max 50 characters
-- Body: wrap at 72 characters, explain the "why"
-- If a Jira ticket was the source for `/feature`, include a full markdown link in the commit body
-- Type prefixes: `feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`
 
 **Human approval required:**
 
-1. Draft the commit message and present it to the user
+1. Present the drafted commit message to the user
 2. Wait for the user to approve or edit it
 3. Do NOT commit until the user says "go" or approves
 4. NEVER push — only the human operator pushes. State: "Commit created. Review the diff and push when ready."

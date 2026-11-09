@@ -154,6 +154,7 @@ or type `$` and select the corresponding `openstack-k8s-agent-tools` skill.
 | `/code-review` | `code-review` | Code review against openstack-k8s-operators conventions (PR number, branch diff, or specific files) |
 | `/create-dt` | `create-dt` | Scaffold RHOSO Deployment Topologies/Validated Architectures for the architecture repo with existing DT/VA analysis and automation |
 | `/task-executor` | `task-executor` | Execute plans task-by-task with checkpointing and resume |
+| `/commit-message` | `commit-message` | Draft a consistent commit message with a Jira line when Jira-sourced |
 | `/backport-review` | — | Compare downstream backport change requests against upstream Gerrit patches |
 | `/jira` | — | Jira integration — ticket inspection, hierarchy validation, outcome posting |
 | `/generate-containerfile` | — | Generate Containerfiles for OpenStack service images from tcib/kolla/rdo analysis |
