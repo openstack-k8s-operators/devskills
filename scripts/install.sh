@@ -162,23 +162,24 @@ install_claude_code() {
         warn "Claude Code CLI not found. Installing files anyway."
     fi
 
-    local skills_dir="$HOME/.claude/skills"
-    local agents_dir="$HOME/.claude/agents"
+    local skills_dir="${SKILLS_DIR:-$HOME/.claude/skills}"
+    local agents_dir="${AGENTS_DIR:-$HOME/.claude/agents}"
 
     install_skills "$skills_dir"
     install_agents_claude "$agents_dir"
 
     info ""
-    info "Installed to ~/.claude/"
-    info "Skills and agents are now available in all your projects."
+    info "Skills installed to: $skills_dir"
+    info "Agents installed to: $agents_dir"
+    info "Skills and agents are installed."
     info "Try: /feature, /code-review, /task-executor, /debug-operator"
 }
 
 install_opencode() {
     info "Installing for OpenCode..."
 
-    local skills_dir="$HOME/.config/opencode/skills"
-    local agents_dir="$HOME/.config/opencode/agents"
+    local skills_dir="${SKILLS_DIR:-$HOME/.config/opencode/skills}"
+    local agents_dir="${AGENTS_DIR:-$HOME/.config/opencode/agents}"
 
     # Install skills (same SKILL.md format)
     install_skills "$skills_dir"
@@ -190,35 +191,40 @@ install_opencode() {
     install_agents_opencode "$agents_dir"
 
     info ""
-    info "Installed to ~/.config/opencode/"
-    info "Skills: $skills_dir"
-    info "Agents: $agents_dir"
-    info "Start OpenCode and your skills should be available."
+    info "Skills installed to: $skills_dir"
+    info "Agents installed to: $agents_dir"
+    info "Skills and agents are installed."
+    info "Try: /feature, /code-review, /task-executor, /debug-operator"
 }
 
 uninstall() {
     local platform="$1"
+    local skills_dir agents_dir
 
     case "$platform" in
         claude)
+            skills_dir="${SKILLS_DIR:-$HOME/.claude/skills}"
+            agents_dir="${AGENTS_DIR:-$HOME/.claude/agents}"
             info "Uninstalling from Claude Code..."
             for skill_dir in "$PLUGIN_DIR/skills"/*/; do
                 local name
                 name=$(basename "$skill_dir")
-                rm -rf "$HOME/.claude/skills/$name"
-                rm -rf "$HOME/.claude/agents/$name"
+                rm -rf "${skills_dir:?}/$name"
+                rm -rf "${agents_dir:?}/$name"
             done
-            info "Removed skills and agents from ~/.claude/"
+            info "Removed skills from $skills_dir and agents from $agents_dir"
             ;;
         opencode)
+            skills_dir="${SKILLS_DIR:-$HOME/.config/opencode/skills}"
+            agents_dir="${AGENTS_DIR:-$HOME/.config/opencode/agents}"
             info "Uninstalling from OpenCode..."
             for skill_dir in "$PLUGIN_DIR/skills"/*/; do
                 local name
                 name=$(basename "$skill_dir")
-                rm -rf "$HOME/.config/opencode/skills/$name"
-                rm -f "$HOME/.config/opencode/agents/$name.md"
+                rm -rf "${skills_dir:?}/$name"
+                rm -f "$agents_dir/$name.md"
             done
-            info "Removed skills and agents from ~/.config/opencode/"
+            info "Removed skills from $skills_dir and agents from $agents_dir"
             ;;
     esac
 }
@@ -346,6 +352,8 @@ Options:
   --opencode           Install globally for OpenCode (~/.config/opencode/)
   --uninstall-claude   Remove from Claude Code
   --uninstall-opencode Remove from OpenCode
+  --skills-dir DIR     Skills directory for Claude Code or OpenCode
+  --agents-dir DIR     Agents directory for Claude Code or OpenCode
   --install-docs       Install docs dependencies (skillsaw)
   --setup-evals        Install eval dependencies (promptfoo + claude-agent-sdk)
   --run-evals [SKILL]  Run evals (all skills, or specific SKILL)
@@ -358,8 +366,14 @@ Marketplace install (Claude Code only, recommended):
 
 Examples:
   $0 --claude-code          # Global install for Claude Code
+  $0 --claude-code --skills-dir .claude/skills --agents-dir .claude/agents
   $0 --opencode             # Global install for OpenCode
+  $0 --opencode --skills-dir .opencode/skills --agents-dir .opencode/agents
   $0 --check                # Check dependencies
+
+Defaults: ~/.claude/{skills,agents} for Claude Code and
+~/.config/opencode/{skills,agents} for OpenCode. Set SKILLS_DIR and AGENTS_DIR
+to override either platform's directories. Command-line options take precedence.
 EOF
 }
 
@@ -372,6 +386,12 @@ main() {
             --opencode)          action="opencode";         shift ;;
             --uninstall-claude)  action="uninstall-claude"; shift ;;
             --uninstall-opencode) action="uninstall-opencode"; shift ;;
+            --skills-dir)
+                [ $# -ge 2 ] && [ -n "$2" ] && [[ "$2" != --* ]] || error "--skills-dir requires a directory"
+                SKILLS_DIR="$2"; shift 2 ;;
+            --agents-dir)
+                [ $# -ge 2 ] && [ -n "$2" ] && [[ "$2" != --* ]] || error "--agents-dir requires a directory"
+                AGENTS_DIR="$2"; shift 2 ;;
             --install-docs)      action="install-docs";     shift ;;
             --setup-evals)       action="setup-evals";      shift ;;
             --run-evals)         action="run-evals"; shift; eval_skill="${1:-}"; [ -n "$eval_skill" ] && shift ;;

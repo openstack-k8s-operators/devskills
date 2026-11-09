@@ -43,8 +43,23 @@ cd openstack-k8s-agent-tools
 make install-claude
 ```
 
-This copies skills to `~/.claude/skills/` and agents to `~/.claude/agents/`,
-which Cursor also discovers.
+By default, skills and agents are installed under `~/.claude/skills/`
+and `~/.claude/agents/`, which Cursor also discovers.
+
+To install into custom directories, run:
+
+```bash
+./scripts/install.sh --claude-code --skills-dir .claude/skills --agents-dir .claude/agents
+```
+
+Set `SKILLS_DIR` and `AGENTS_DIR` to customize paths when using
+`make install-claude` or `make uninstall-claude`. The same `--skills-dir`
+and `--agents-dir` options work with `--uninstall-claude`. Command-line
+options take precedence over environment variables.
+
+```bash
+SKILLS_DIR=.claude/skills AGENTS_DIR=.claude/agents make install-claude
+```
 
 ### OpenCode
 
@@ -52,6 +67,24 @@ which Cursor also discovers.
 git clone https://github.com/openstack-k8s-operators/devskills.git
 cd openstack-k8s-agent-tools
 make install-opencode
+```
+
+By default, skills and agents are installed under `~/.config/opencode/skills/`
+and `~/.config/opencode/agents/`.
+
+To install into custom directories, run:
+
+```bash
+./scripts/install.sh --opencode --skills-dir .opencode/skills --agents-dir .opencode/agents
+```
+
+Set `SKILLS_DIR` and `AGENTS_DIR` to customize paths when using
+`make install-opencode` or `make uninstall-opencode`. The same `--skills-dir`
+and `--agents-dir` options work with `--uninstall-opencode`. Command-line
+options take precedence over environment variables.
+
+```bash
+SKILLS_DIR=.opencode/skills AGENTS_DIR=.opencode/agents make install-opencode
 ```
 
 ### Codex
@@ -71,7 +104,9 @@ arguments:
 ```text
 $openstack-k8s-agent-tools:code-review 438
 ```
+
 To use a skill in codex, use `$`, not `/`. For example:
+
 ```
 › /jira OSPRH-35190
 
