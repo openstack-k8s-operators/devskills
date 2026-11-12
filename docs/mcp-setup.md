@@ -77,6 +77,7 @@ claude mcp add-json "mcp-atlassian" \
 Note: OpenCode requires the `"type": "stdio"` field in MCP server definitions.
 
 **Codex** — Add the atlassian MCP to codex:
+
 ```
 codex mcp add atlassian \
     --env JIRA_URL=https://redhat.atlassian.net/ \
@@ -90,7 +91,9 @@ codex mcp add atlassian \
     -e CONFLUENCE_URL -e CONFLUENCE_USERNAME -e CONFLUENCE_API_TOKEN \
     ghcr.io/sooperset/mcp-atlassian:latest
 ```
+
 Confirm it was registered:
+
 ```
 codex mcp get atlassian
 codex mcp list

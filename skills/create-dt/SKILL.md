@@ -35,6 +35,7 @@ Check for existing DT plans:
 ```
 
 If a matching plan exists:
+
 - **Incomplete** → offer to resume from the first missing section
 - **Strategy not yet approved** → re-present strategies for approval
 - **Complete but not generated** → offer to generate files
@@ -86,6 +87,7 @@ The skill must locate a local clone of `openstack-k8s-operators/architecture`. S
 ## Output
 
 The agent writes a plan file to:
+
 ```
 ~/.openstack-k8s-agent-plans/architecture/YYYY-MM-DD-<ticket-or-slug>-dt-plan.md
 ```

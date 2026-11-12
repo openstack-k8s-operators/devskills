@@ -65,10 +65,12 @@ VAs and DTs share the same kustomize structure — treat them as equals during a
    "Architecture repo not found at `<path>`."
 
 1. List all existing DTs and VAs using Bash (some use category subdirectories):
+
    ```bash
    find dt/ va/ -maxdepth 3 -name kustomization.yaml
    ls automation/vars/
    ```
+
    `-maxdepth 3` finds `dt/<name>/kustomization.yaml` and
    `va/<name>/kustomization.yaml` (depth 2) as well as
    `dt/<category>/<name>/kustomization.yaml` (depth 3) — the top-level
@@ -99,6 +101,7 @@ VAs and DTs share the same kustomize structure — treat them as equals during a
 Present **2-3 strategies** for creating the DT or VA:
 
 For each strategy:
+
 - **Approach**: which base DT or VA to start from and what to modify
 - **Pros**: why this base is a good fit
 - **Cons**: what needs significant changes
@@ -117,6 +120,7 @@ After approval, generate files in this order:
 #### 4a. Naming
 
 Follow existing conventions:
+
 - `uni` prefix — universal/generic topologies
 - `nova` prefix — Nova/compute-focused
 - `bgp` prefix — BGP networking
@@ -134,6 +138,7 @@ fits. The same applies to `va/`. Match what the closest base uses.
 #### 4b. Core files
 
 **`{dt,va}/<name>/kustomization.yaml`**
+
 - `apiVersion: kustomize.config.k8s.io/v1alpha1`
 - `kind: Component`
 - Import `lib/control-plane` and other needed components
@@ -142,12 +147,14 @@ fits. The same applies to `va/`. Match what the closest base uses.
 - Add replacements for each enabled service
 
 **`{dt,va}/<name>/values.yaml`**
+
 - Network configuration: subnets, allocation ranges, VLANs
 - DNS, gateway, interface mappings
 - Use the base topology's values as template
 - Mark environment-specific values with comments: `# CHANGEME: adjust for your environment`
 
 **`{dt,va}/<name>/service-values.yaml`** (if needed)
+
 - Service-specific configuration: replicas, custom configs
 - Feature toggles (Swift enabled, Ironic enabled, etc.)
 
@@ -161,10 +168,12 @@ fits. The same applies to `va/`. Match what the closest base uses.
 **`{dt,va}/<name>/edpm/deployment/kustomization.yaml`**
 
 For Ceph-based topologies, split into:
+
 - `{dt,va}/<name>/edpm-pre-ceph/`
 - `{dt,va}/<name>/edpm-post-ceph/`
 
 For networker nodes:
+
 - `{dt,va}/<name>/networker/kustomization.yaml`
 
 #### 4e. Networking (if custom networking needed)
@@ -174,6 +183,7 @@ MetalLB configuration, NetworkAttachmentDefinitions (NADs), NetConfig resources.
 #### 4f. Automation vars
 
 **`automation/vars/<name>.yaml`**
+
 - Define all stages with correct sequencing
 - Set appropriate timeouts (5m for NNCP, 60m for control-plane, 40-60m for EDPM)
 - Include wait_conditions for each stage
@@ -199,6 +209,7 @@ resources:
 The `../` depth varies depending on whether the topology uses a category subdirectory.
 Count the path segments from the examples file back to the repo root to get the
 correct number. For example:
+
 - `examples/dt/<name>/edpm/nodeset/` → 5 levels up to reach `dt/<name>/`
 - `examples/dt/<category>/<name>/edpm/nodeset/` → 6 levels up to reach `dt/<category>/<name>/`
 
@@ -223,6 +234,7 @@ Do NOT hand-edit `zuul.d/validations.yaml` or `zuul.d/projects.yaml`.
 ### Step 6: Write Plan File
 
 Save the plan to:
+
 ```
 ~/.openstack-k8s-agent-plans/architecture/YYYY-MM-DD-<ticket-or-slug>-dt-plan.md
 ```

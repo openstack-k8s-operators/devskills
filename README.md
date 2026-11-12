@@ -71,7 +71,9 @@ arguments:
 ```text
 $openstack-k8s-agent-tools:code-review 438
 ```
+
 To use a skill in codex, use `$`, not `/`. For example:
+
 ```
 › /jira OSPRH-35190
 
