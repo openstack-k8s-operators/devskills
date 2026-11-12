@@ -1,6 +1,7 @@
 We need a new Deployment Topology for testing Nova with Ceph HCI storage.
 
 Requirements:
+
 - 3 compute nodes with HCI (co-located Ceph OSDs)
 - Nova, Glance, Cinder, Neutron (OVN), and Heat services enabled
 - Ceph HCI storage backend for Cinder and Glance

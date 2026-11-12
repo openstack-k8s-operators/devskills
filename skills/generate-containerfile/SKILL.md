@@ -53,6 +53,7 @@ If the user specifies a different location (local file path or URL), use
 that instead.
 
 From the design document, understand:
+
 - The Containerfile template pattern (base → service image)
 - The kolla interface contract (ENTRYPOINT, CMD, scripts, users, sudoers)
 - The four dep files: builddeps.txt, pythonbuilddeps.txt, bindeps.txt, pythondeps.txt
@@ -86,6 +87,7 @@ curl -sL https://raw.githubusercontent.com/openstack-k8s-operators/tcib/main/con
 Note: Some services may not follow the `<service>-base/` hierarchy pattern. Check for direct entries under `os/` as well (e.g., `placement-api/` is directly under `os/`, not under a `placement-base/`).
 
 Extract from each YAML:
+
 - `tcib_packages` — RPM packages installed
 - `tcib_runs` and `tcib_actions` — build-time commands
 - `tcib_user` — runtime user
@@ -110,6 +112,7 @@ curl -sL "https://api.github.com/repos/rdo-packages/<service>-distgit/git/trees/
 ```
 
 From the spec file, extract:
+
 - `Requires:` lines for each subpackage (filtering out `python3-*` packages since those come via pip)
 - `%pre` sections for user/group creation (UIDs, GIDs, group memberships)
 - Subpackage names to understand the service decomposition
@@ -264,6 +267,7 @@ the service expects to exist at runtime. Translate RPM macros to paths:
 | `%{_datadir}` | `/usr/share` |
 
 For example:
+
 ```
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova        → /var/lib/nova (755)
 install -d -m 755 %{buildroot}%{_sharedstatedir}/nova/instances → /var/lib/nova/instances (755)
@@ -316,6 +320,7 @@ Place them in the `config/` directory mirroring the target filesystem path,
 and note the permissions for the Containerfile.
 
 **Category 3: Files to exclude** — Skip these entirely:
+
 - Systemd unit files (`%{SOURCE1}` → `openstack-nova-api.service`, etc.)
 - Logrotate configs (`%{SOURCE6}` → `openstack-nova.logrotate`)
 - SysV init scripts
@@ -330,6 +335,7 @@ step 2) to determine which RPM subpackages are installed in each container.
 This tells you which files go in which container image.
 
 For example, if:
+
 - `%files compute` lists `/etc/nova/rootwrap.d/compute.filters`
 - tcib's `nova-compute.yaml` installs `openstack-nova-compute`
 
@@ -625,6 +631,7 @@ python3-pip
 
 Use the tcib YAML `tcib_packages` and the spec file `Requires:` as sources.
 Filter out:
+
 - Most `python3-*` packages (these go in pythondeps.txt or come via pip)
 - `openstack-<service>-*` packages (replaced by pip install from source)
 - Packages already in the base image (dumb-init, sudo, etc.)
@@ -650,6 +657,7 @@ oslo.cache[dogpile]
 ```
 
 To populate this, check:
+
 - If the service depends on `oslo.db`, add `oslo.db[mysql]` for the MySQL driver
 - If the service depends on `oslo.cache`, add `oslo.cache[dogpile]` for the caching backend
 - The spec file's `Requires: python3-*` lines for packages not in the
@@ -694,6 +702,7 @@ Check if the user specified which streams to include in the initial
 request (e.g., `/generate-containerfile watcher streams=master,hibiscus`).
 
 If not specified, ask the user:
+
 - Which streams should be defined? (e.g., master, hibiscus, stable)
 - For each stream, which branch should the service follow?
   (e.g., master → master, hibiscus → stable/2024.2)
@@ -746,6 +755,7 @@ in step 5), add their entries too.
 ### 9d. Create directory structure
 
 Create empty `src/` directories with `.gitkeep` at both levels:
+
 - `containers/<project>/src/.gitkeep`
 - `containers/<project>/<image>/src/.gitkeep`
 
@@ -755,6 +765,7 @@ and `COPY <image>/src/ /src/` will fail if the directory is missing.
 ## Step 10: Present output
 
 Present all generated files to the user for review. For each file, show:
+
 1. The file path
 2. The full file content
 3. A brief explanation of design choices made
