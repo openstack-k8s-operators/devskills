@@ -24,6 +24,7 @@ Documentation for openstack-k8s-operators operator development and troubleshooti
 | **commit-message** | Draft a commit message with a Jira line when Jira-sourced | `/commit-message OSPRH-2345` |
 | **code-review** | Code review (dev-docs conventions) | `/code-review` |
 | **backport-review** | Downstream vs upstream patch comparison | `/backport-review` |
+| **s2i-track-patch** | Patch tracking from OpenDev to the downstream build | `/s2i-track-patch 961234` |
 | **jira** | Jira hierarchy validation and integration | `/jira OSPRH-2345` |
 
 ## Common Workflows

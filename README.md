@@ -158,6 +158,7 @@ or type `$` and select the corresponding `openstack-k8s-agent-tools` skill.
 | `/backport-review` | — | Compare downstream backport change requests against upstream Gerrit patches |
 | `/jira` | — | Jira integration — ticket inspection, hierarchy validation, outcome posting |
 | `/generate-containerfile` | — | Generate Containerfiles for OpenStack service images from tcib/kolla/rdo analysis |
+| `/s2i-track-patch` | — | Track an OpenDev patch through the S2I pipeline — tracked branch, s2i pin, images, downstream pin, Konflux build |
 
 Skills with an agent load an `AGENT.md` file that contains the full domain knowledge and methodology. Skills without an agent are self-contained in their `SKILL.md`.
 
