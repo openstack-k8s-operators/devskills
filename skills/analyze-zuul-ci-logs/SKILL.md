@@ -35,6 +35,8 @@ context: fork
 
 - Often the nested log which is printed on a single line inside `job-output.txt` can be found properly line-delimited in some other place in the logs directory.
 
+- If Tempest or Tobiko tests were ran as part of the job, you should look at the test results because they often contain good hints about the state of the environment.
+
 - Pay attention to the time in the logs. When you spot the main problem that the job perhaps failed on, it is often useful to cross-reference what was happening at the same time in relevant services and operators.
 
 - Feel free to spawn a subagent to answer a particular question if it seems helpful. Be sure to pass along all important rules and hints to the subagent, and give it a reasonable token budget (e.g. 200 K tokens).
